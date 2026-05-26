@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shop — RookiDroid · 3D Printed Robots &amp; Custom Gadgets</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- ========================================================
+       NEVE / WORDPRESS INTEGRATION NOTES
+       ========================================================
+       1. This file is a standalone design preview for /shop/.
+       2. In WordPress, header/footer are handled by Neve.
+       3. The product grid section maps to:
+            [rookidroid_shop_page
+              categories="3d-model,electronics,source-code,gadget"
+              labels="3D Models,Electronics,Software,Gadgets"
+              columns="3" limit="12"]
+       4. Copy the :root {} block to
+          Appearance → Customize → Additional CSS.
+       ======================================================== -->
+
+  <style>
+    /* ── Design Tokens ─────────────────────────────────── */
+    :root {
+      --clr-primary:        #9c27b0;
+      --clr-primary-dark:   #7b1fa2;
+      --clr-primary-light:  #ce93d8;
+      --clr-primary-subtle: #f3e5f5;
+      --clr-primary-ghost:  #faf5fb;
+      --clr-accent:         #e040fb;
+      --clr-surface:        #ffffff;
+      --clr-surface-alt:    #f8f9fa;
+      --clr-text:           #1a1a2e;
+      --clr-text-secondary: #555770;
+      --clr-text-muted:     #8e8ea0;
+      --clr-border:         #e8e8ed;
+      --clr-success:        #2e7d32;
+      --clr-sale:           #d32f2f;
+      --radius-sm:          8px;
+      --radius-md:          14px;
+      --radius-lg:          22px;
+      --radius-xl:          32px;
+      --shadow-sm:          0 1px 3px rgba(0,0,0,.06);
+      --shadow-md:          0 4px 16px rgba(0,0,0,.08);
+      --shadow-lg:          0 8px 32px rgba(0,0,0,.10);
+      --shadow-glow:        0 4px 24px rgba(156,39,176,.18);
+      --transition:         .25s cubic-bezier(.4,0,.2,1);
+      --font-body:          'Inter', system-ui, sans-serif;
+      --font-display:       'Space Grotesk', 'Inter', sans-serif;
+      --max-w:              1240px;
+    }
+
+    /* ── Reset & Base ──────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      color: var(--clr-text);
+      background: var(--clr-surface);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { display: block; max-width: 100%; height: auto; }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+
+    .container { width: 100%; max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+
+    /* ── Utility ─────────────────────────────────────────── */
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+    .badge {
+      display: inline-block; font-size: .68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .06em; padding: 3px 9px; border-radius: 50px; color: #fff; line-height: 1.4;
+    }
+    .badge--sale { background: var(--clr-sale); }
+    .badge--free { background: var(--clr-success); }
+    .badge--new  { background: var(--clr-primary); }
+
+    /* ── Buttons ─────────────────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--font-body); font-weight: 600; font-size: .9rem;
+      padding: 10px 20px; border-radius: var(--radius-sm); border: 2px solid transparent;
+      cursor: pointer; transition: var(--transition); text-decoration: none;
+      white-space: nowrap; line-height: 1;
+    }
+    .btn--primary {
+      background: var(--clr-primary); color: #fff; border-color: var(--clr-primary);
+      box-shadow: var(--shadow-glow);
+    }
+    .btn--primary:hover { background: var(--clr-primary-dark); border-color: var(--clr-primary-dark); transform: translateY(-1px); }
+    .btn--sm { font-size: .82rem; padding: 8px 16px; }
+    .btn--full { width: 100%; justify-content: center; }
+
+    /* ── Header ──────────────────────────────────────────── */
+    .site-header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,.88); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--clr-border);
+    }
+    .site-header .container {
+      display: flex; align-items: center; justify-content: space-between; height: 72px;
+    }
+    .logo {
+      font-family: var(--font-display); font-weight: 700; font-size: 1.35rem;
+      color: var(--clr-primary); display: flex; align-items: center; gap: 10px;
+    }
+    .logo svg { width: 34px; height: 34px; }
+    .nav-links { display: flex; gap: 32px; }
+    .nav-links a {
+      font-size: .92rem; font-weight: 500; color: var(--clr-text-secondary);
+      transition: var(--transition); position: relative;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; left: 0; bottom: -4px;
+      width: 0; height: 2px; background: var(--clr-primary); transition: var(--transition);
+    }
+    .nav-links a:hover { color: var(--clr-primary); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a.is-current { color: var(--clr-primary); font-weight: 600; }
+    .nav-links a.is-current::after { width: 100%; }
+    .header-actions { display: flex; align-items: center; gap: 16px; }
+    .header-actions a { color: var(--clr-text-secondary); transition: var(--transition); }
+    .header-actions a:hover { color: var(--clr-primary); }
+    .cart-btn {
+      position: relative; display: flex; align-items: center;
+      background: none; border: none; cursor: pointer; color: var(--clr-text-secondary);
+    }
+    .cart-btn:hover { color: var(--clr-primary); }
+    .cart-count {
+      position: absolute; top: -6px; right: -8px;
+      background: var(--clr-primary); color: #fff;
+      font-size: .65rem; font-weight: 700;
+      width: 18px; height: 18px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .nav-toggle { display: none; background: none; border: none; cursor: pointer; color: var(--clr-text); }
+
+    /* ── Mobile Nav ──────────────────────────────────────── */
+    .mobile-nav {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,.4); backdrop-filter: blur(4px);
+    }
+    .mobile-nav.is-open { display: block; }
+    .mobile-nav__panel {
+      position: absolute; top: 0; right: 0;
+      width: 280px; height: 100%; background: #fff;
+      padding: 24px; box-shadow: var(--shadow-lg);
+    }
+    .mobile-nav__close {
+      background: none; border: none; font-size: 1.4rem; cursor: pointer; float: right; color: var(--clr-text);
+    }
+    .mobile-nav__links { margin-top: 48px; }
+    .mobile-nav__links a {
+      display: block; padding: 14px 0; font-size: 1.05rem;
+      font-weight: 500; border-bottom: 1px solid var(--clr-border); color: var(--clr-text-secondary);
+    }
+    .mobile-nav__links a:hover { color: var(--clr-primary); }
+
+    /* ── Shop Hero Banner ───────────────────────────────── */
+    .shop-hero {
+      background: linear-gradient(135deg, var(--clr-primary-ghost) 0%, #fff 60%, var(--clr-primary-subtle) 100%);
+      padding: 48px 0 40px; border-bottom: 1px solid var(--clr-border);
+    }
+    .shop-hero__breadcrumb {
+      display: flex; align-items: center; gap: 8px;
+      font-size: .8rem; color: var(--clr-text-muted); margin-bottom: 16px;
+    }
+    .shop-hero__breadcrumb a { color: var(--clr-primary); font-weight: 500; }
+    .shop-hero__breadcrumb svg { width: 14px; height: 14px; flex-shrink: 0; }
+    .shop-hero__title {
+      font-family: var(--font-display); font-weight: 800;
+      font-size: clamp(1.8rem, 3vw, 2.6rem); line-height: 1.15; margin-bottom: 10px;
+    }
+    .shop-hero__title span { color: var(--clr-primary); }
+    .shop-hero__subtitle { font-size: 1rem; color: var(--clr-text-secondary); max-width: 520px; }
+    .shop-hero__stats {
+      display: flex; gap: 36px; margin-top: 28px; padding-top: 24px;
+      border-top: 1px solid var(--clr-border);
+    }
+    .shop-hero__stat-value {
+      font-family: var(--font-display); font-weight: 700; font-size: 1.4rem; color: var(--clr-primary);
+    }
+    .shop-hero__stat-label { font-size: .78rem; color: var(--clr-text-muted); margin-top: 2px; }
+
+    /* ── Section ─────────────────────────────────────────── */
+    .section { padding: 48px 0 72px; }
+
+    /* ── Shop Filter Bar ─────────────────────────────────── */
+    .rd-shop-filterbar {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 12px;
+      padding: 14px 18px;
+      background: var(--clr-surface); border: 1.5px solid var(--clr-border);
+      border-radius: var(--radius-md); margin-bottom: 24px;
+    }
+    .rd-shop-search { position: relative; flex: 0 0 240px; }
+    .rd-shop-search__icon {
+      position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+      color: var(--clr-text-muted); pointer-events: none;
+    }
+    .rd-shop-search input {
+      width: 100%; padding: 9px 12px 9px 34px;
+      border: 1.5px solid var(--clr-border); border-radius: var(--radius-sm);
+      font-family: var(--font-body); font-size: .875rem;
+      background: var(--clr-surface); color: var(--clr-text);
+      transition: border-color var(--transition); outline: none;
+    }
+    .rd-shop-search input:focus {
+      border-color: var(--clr-primary); box-shadow: 0 0 0 3px var(--clr-primary-ghost);
+    }
+    .rd-chip-group { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; min-width: 0; }
+    .chip {
+      font-family: var(--font-body); font-size: .8rem; font-weight: 500;
+      padding: 7px 15px; border-radius: 50px;
+      border: 1.5px solid var(--clr-border);
+      background: transparent; color: var(--clr-text-secondary);
+      cursor: pointer; transition: all var(--transition); white-space: nowrap; line-height: 1;
+    }
+    .chip:hover { border-color: var(--clr-primary-light); color: var(--clr-primary); background: var(--clr-primary-ghost); }
+    .chip.is-active {
+      background: var(--clr-primary); color: #fff; border-color: var(--clr-primary);
+      box-shadow: var(--shadow-glow);
+    }
+    .rd-sort-select {
+      padding: 9px 14px; border: 1.5px solid var(--clr-border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body); font-size: .875rem;
+      background: var(--clr-surface); color: var(--clr-text);
+      cursor: pointer; min-width: 165px; flex-shrink: 0; outline: none;
+      transition: border-color var(--transition);
+    }
+    .rd-sort-select:focus { border-color: var(--clr-primary); }
+
+    /* ── Shop Main Layout ───────────────────────────────── */
+    .rd-shop-main { display: grid; grid-template-columns: 220px 1fr; gap: 24px; align-items: start; }
+
+    /* ── Sidebar ─────────────────────────────────────────── */
+    .rd-shop-sidebar { position: sticky; top: 88px; }
+    .rd-sidebar-section {
+      background: var(--clr-surface); border: 1.5px solid var(--clr-border);
+      border-radius: var(--radius-md); padding: 18px; margin-bottom: 14px;
+    }
+    .rd-sidebar-section__title {
+      font-family: var(--font-display); font-weight: 700; font-size: .78rem;
+      text-transform: uppercase; letter-spacing: .08em;
+      color: var(--clr-text); margin: 0 0 12px;
+    }
+    .rd-sidebar-btn {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; padding: 8px 10px; border-radius: var(--radius-sm);
+      border: none; background: transparent; color: var(--clr-text-secondary);
+      font-family: var(--font-body); font-size: .86rem; font-weight: 500;
+      cursor: pointer; transition: all var(--transition); text-align: left; line-height: 1.3;
+    }
+    .rd-sidebar-btn:hover { background: var(--clr-primary-ghost); color: var(--clr-primary); }
+    .rd-sidebar-btn.is-active { background: var(--clr-primary-subtle); color: var(--clr-primary); font-weight: 600; }
+    .rd-sidebar-btn span {
+      font-size: .72rem; color: var(--clr-text-muted);
+      background: var(--clr-surface-alt); padding: 2px 6px;
+      border-radius: 50px; flex-shrink: 0; margin-left: 6px;
+    }
+    .rd-sidebar-btn.is-active span { background: rgba(156,39,176,.14); color: var(--clr-primary); }
+
+    /* ── Shop Content Area ──────────────────────────────── */
+    .rd-shop-content { min-width: 0; }
+    .rd-shop-result-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 18px; font-size: .85rem; color: var(--clr-text-muted);
+    }
+
+    /* ── Product Grid ───────────────────────────────────── */
+    .product-grid {
+      display: grid; gap: 20px; grid-template-columns: repeat(3, 1fr);
+    }
+
+    /* ── Product Card ───────────────────────────────────── */
+    .product-card {
+      background: var(--clr-surface); border: 1.5px solid var(--clr-border);
+      border-radius: var(--radius-md); overflow: hidden;
+      transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+      position: relative; display: flex; flex-direction: column;
+    }
+    .product-card:hover { border-color: var(--clr-primary-light); box-shadow: var(--shadow-md); transform: translateY(-3px); }
+    .product-card__badges {
+      position: absolute; top: 10px; left: 10px; z-index: 2; display: flex; gap: 6px;
+    }
+    .product-card__image {
+      display: block; aspect-ratio: 1;
+      background: var(--clr-surface-alt); overflow: hidden; position: relative;
+      text-decoration: none;
+    }
+    .product-card__image img { width: 100%; height: 100%; object-fit: cover; transition: transform .45s ease; }
+    .product-card:hover .product-card__image img { transform: scale(1.04); }
+    .product-card__img-ph {
+      width: 100%; height: 100%; display: flex; align-items: center;
+      justify-content: center; font-size: 3.5rem; opacity: .2; color: var(--clr-primary);
+    }
+    .product-card__overlay {
+      position: absolute; inset: 0;
+      background: rgba(156,39,176,.06); backdrop-filter: blur(1px);
+      opacity: 0; transition: opacity var(--transition);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .product-card:hover .product-card__overlay { opacity: 1; }
+    .product-card__body { padding: 16px; display: flex; flex-direction: column; flex: 1; }
+    .product-card__category {
+      font-size: .7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--clr-primary); margin-bottom: 6px;
+    }
+    .product-card__title { font-weight: 600; font-size: .95rem; line-height: 1.4; margin: 0 0 10px; }
+    .product-card__title a { color: inherit; text-decoration: none; transition: color var(--transition); }
+    .product-card__title a:hover { color: var(--clr-primary); }
+    .product-card__price { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
+    .product-card__price-current {
+      font-family: var(--font-display); font-weight: 700; font-size: 1.08rem; color: var(--clr-primary);
+    }
+    .product-card__price-original { font-size: .82rem; color: var(--clr-text-muted); text-decoration: line-through; }
+    .product-card__actions { margin-top: auto; }
+
+    /* ── Pagination ─────────────────────────────────────── */
+    .rd-pagination {
+      display: flex; justify-content: center; align-items: center; flex-wrap: wrap;
+      gap: 6px; margin-top: 36px;
+    }
+    .rd-page-btn {
+      min-width: 36px; height: 36px; padding: 0 10px;
+      border-radius: var(--radius-sm); border: 1.5px solid var(--clr-border);
+      background: transparent; color: var(--clr-text-secondary);
+      font-family: var(--font-body); font-size: .86rem; font-weight: 500;
+      cursor: pointer; transition: all var(--transition);
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .rd-page-btn:hover { border-color: var(--clr-primary); color: var(--clr-primary); }
+    .rd-page-btn.is-active { background: var(--clr-primary); color: #fff; border-color: var(--clr-primary); }
+
+    /* ── Footer ──────────────────────────────────────────── */
+    .site-footer { background: var(--clr-text); color: rgba(255,255,255,.7); padding: 64px 0 0; }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px;
+      padding-bottom: 48px; border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+    .footer__logo {
+      font-family: var(--font-display); font-weight: 700; font-size: 1.3rem;
+      color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+    }
+    .footer__desc { font-size: .88rem; line-height: 1.7; margin-bottom: 20px; }
+    .footer__socials { display: flex; gap: 12px; }
+    .footer__social {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: rgba(255,255,255,.08); display: flex; align-items: center; justify-content: center;
+      transition: var(--transition);
+    }
+    .footer__social:hover { background: var(--clr-primary); color: #fff; }
+    .footer__social svg { width: 18px; height: 18px; }
+    .footer__heading {
+      font-weight: 600; font-size: .88rem; color: #fff;
+      text-transform: uppercase; letter-spacing: .08em; margin-bottom: 18px;
+    }
+    .footer__links li { margin-bottom: 10px; }
+    .footer__links a { font-size: .88rem; transition: var(--transition); }
+    .footer__links a:hover { color: var(--clr-primary-light); }
+    .footer__bottom {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 24px 0; font-size: .82rem;
+    }
+    .footer__bottom a { transition: var(--transition); }
+    .footer__bottom a:hover { color: var(--clr-primary-light); }
+
+    /* ── Responsive ─────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .product-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 960px) {
+      .rd-shop-main { grid-template-columns: 1fr; }
+      .rd-shop-sidebar { position: static; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      .rd-sidebar-section { margin-bottom: 0; }
+    }
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .nav-toggle { display: block; }
+      .shop-hero__stats { gap: 20px; flex-wrap: wrap; }
+      .rd-shop-filterbar { padding: 10px; }
+      .rd-shop-search { flex: 0 0 100%; }
+      .rd-sort-select { width: 100%; }
+      .rd-shop-sidebar { grid-template-columns: 1fr; }
+      .product-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 480px) {
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer__bottom { flex-direction: column; gap: 12px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════
+     HEADER
+     ═══════════════════════════════════════════════════════ -->
+<header class="site-header">
+  <div class="container">
+    <a href="/" class="logo">
+      <svg viewBox="0 0 34 34" fill="none"><rect width="34" height="34" rx="8" fill="#9c27b0"/><path d="M10 22V12h4l3 5 3-5h4v10h-3.5v-6l-3.5 5-3.5-5v6H10z" fill="#fff"/></svg>
+      RookiDroid
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="https://rookidroid.com/shop/" class="is-current">Shop</a>
+      <a href="https://rookidroid.com/product-category/robot/">Robots</a>
+      <a href="https://rookidroid.com/product-category/gadget/">Gadgets</a>
+      <a href="https://rookidroid.com/about-rookidroid/">About</a>
+    </nav>
+    <div class="header-actions">
+      <a href="https://rookidroid.com/my-account/" aria-label="Account">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </a>
+      <a href="https://rookidroid.com/cart/" class="cart-btn" aria-label="Cart">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+        <span class="cart-count">0</span>
+      </a>
+      <button class="nav-toggle" aria-label="Open menu" onclick="document.querySelector('.mobile-nav').classList.add('is-open')">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" onclick="if(event.target===this)this.classList.remove('is-open')">
+  <div class="mobile-nav__panel">
+    <button class="mobile-nav__close" onclick="document.querySelector('.mobile-nav').classList.remove('is-open')">&times;</button>
+    <div class="mobile-nav__links">
+      <a href="https://rookidroid.com/shop/">Shop</a>
+      <a href="https://rookidroid.com/product-category/robot/">Robots</a>
+      <a href="https://rookidroid.com/product-category/gadget/">Gadgets</a>
+      <a href="https://rookidroid.com/about-rookidroid/">About</a>
+      <a href="https://rookidroid.com/my-account/">My Account</a>
+      <a href="https://rookidroid.com/cart/">Cart</a>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     SHOP HERO BANNER
+     ═══════════════════════════════════════════════════════ -->
+<div class="shop-hero">
+  <div class="container">
+    <nav class="shop-hero__breadcrumb" aria-label="Breadcrumb">
+      <a href="https://rookidroid.com/">Home</a>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      <span>Shop</span>
+    </nav>
+    <h1 class="shop-hero__title">The <span>RookiDroid</span> Shop</h1>
+    <p class="shop-hero__subtitle">3D models, controller boards, open-source firmware, and custom gadgets — all hand-crafted and tested.</p>
+    <div class="shop-hero__stats">
+      <div>
+        <div class="shop-hero__stat-value">16+</div>
+        <div class="shop-hero__stat-label">Products</div>
+      </div>
+      <div>
+        <div class="shop-hero__stat-value">4</div>
+        <div class="shop-hero__stat-label">Categories</div>
+      </div>
+      <div>
+        <div class="shop-hero__stat-value">Free</div>
+        <div class="shop-hero__stat-label">STL Files</div>
+      </div>
+      <div>
+        <div class="shop-hero__stat-value">Open</div>
+        <div class="shop-hero__stat-label">Source</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     SHOP CONTENT
+     WordPress: paste the shortcode below into the /shop/ page
+     content area (or a Custom HTML block in the block editor).
+     The preview HTML underneath can be removed in WordPress.
+     ═══════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="container">
+
+    <!-- WordPress shortcode ─────────────────────────────── -->
+    [rookidroid_shop_page
+    categories="3d-model,electronics,source-code,gadget"
+    labels="3D Models,Electronics,Software,Gadgets"
+    columns="3" limit="12"]
+
+  </div><!-- /.container -->
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     FOOTER
+     ═══════════════════════════════════════════════════════ -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer__logo">
+          <svg viewBox="0 0 34 34" fill="none" width="28" height="28"><rect width="34" height="34" rx="8" fill="#9c27b0"/><path d="M10 22V12h4l3 5 3-5h4v10h-3.5v-6l-3.5 5-3.5-5v6H10z" fill="#fff"/></svg>
+          RookiDroid
+        </div>
+        <p class="footer__desc">Make robotics accessible and fun for everyone. 3D-printed robots, controller boards, design files, and custom gadgets.</p>
+        <div class="footer__socials">
+          <a href="https://x.com/rookidroid" class="footer__social" aria-label="X / Twitter" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a href="https://github.com/rookidroid" class="footer__social" aria-label="GitHub" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+          </a>
+        </div>
+      </div>
+      <div>
+        <div class="footer__heading">Shop</div>
+        <ul class="footer__links">
+          <li><a href="https://rookidroid.com/product-category/robot/3d-model/">3D Models</a></li>
+          <li><a href="https://rookidroid.com/product-category/robot/electronics/">Electronics</a></li>
+          <li><a href="https://rookidroid.com/product-category/robot/source-code/">Source Code</a></li>
+          <li><a href="https://rookidroid.com/product-category/gadget/">Gadgets</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer__heading">Projects</div>
+        <ul class="footer__links">
+          <li><a href="https://rookidroid.com/product/hexapod-v2-stl/">Hexapod v2</a></li>
+          <li><a href="https://rookidroid.com/product/smarty-stl/">Smarty</a></li>
+          <li><a href="https://rookidroid.com/product/hexapod-mochi/">Hexapod Mochi</a></li>
+          <li><a href="https://rookidroid.com/product/arcade-controller/">Arcade Controller</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer__heading">Info</div>
+        <ul class="footer__links">
+          <li><a href="https://rookidroid.com/about-rookidroid/">About</a></li>
+          <li><a href="https://rookidroid.com/refund_returns/">Shipping &amp; Returns</a></li>
+          <li><a href="https://rookidroid.com/privacy-policy/">Privacy Policy</a></li>
+          <li><a href="mailto:info@rookidroid.com">Contact Us</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>© 2023 – 2025 rookidroid.com</span>
+      <span>
+        <a href="https://rookidroid.com/refund_returns/">Shipping &amp; Returns</a> ·
+        <a href="https://rookidroid.com/privacy-policy/">Privacy Policy</a>
+      </span>
+      <span>📍 Westfield, Indiana, USA</span>
+    </div>
+  </div>
+</footer>
+
+
+<script>
+/* ── Vanilla JS shop filters (static preview — no WordPress/jQuery needed) ── */
+(function () {
+  var grid       = document.getElementById('productGrid');
+  if (!grid) return;
+
+  var filterState = { category: 'all', price: 'all', query: '', sort: 'featured' };
+
+  var resultCount   = document.getElementById('resultCount');
+  var searchInput   = document.getElementById('productSearch');
+  var sortSelect    = document.getElementById('sortSelect');
+  var chips         = document.querySelectorAll('#chipCategoryFilter .chip');
+  var sidebarCats   = document.querySelectorAll('#sidebarCategoryFilter button');
+  var sidebarPrices = document.querySelectorAll('#sidebarPriceFilter button');
+
+  function parsePriceRange(val) {
+    if (val === 'all') return null;
+    var parts = val.split('-');
+    return { min: +parts[0], max: +parts[1] };
+  }
+
+  function setActive(btns, predicate) {
+    btns.forEach(function (b) {
+      b.classList.toggle('is-active', predicate(b));
+    });
+  }
+
+  function applyFilters() {
+    var cards  = Array.prototype.slice.call(grid.querySelectorAll('.product-card'));
+    var range  = parsePriceRange(filterState.price);
+    var q      = filterState.query.trim().toLowerCase();
+
+    var visible = cards.filter(function (card) {
+      var cat   = card.getAttribute('data-category') || '';
+      var name  = (card.getAttribute('data-name')   || '').toLowerCase();
+      var price = parseFloat(card.getAttribute('data-price') || 0);
+      return (filterState.category === 'all' || cat === filterState.category)
+          && (!q     || name.indexOf(q) !== -1)
+          && (!range || (price >= range.min && price <= range.max));
+    });
+
+    cards.forEach(function (c) { c.style.display = 'none'; });
+    visible.forEach(function (c) { c.style.display = ''; });
+
+    // Sort
+    var sorted = visible.slice();
+    if (filterState.sort === 'price-asc') {
+      sorted.sort(function (a, b) { return parseFloat(a.getAttribute('data-price')) - parseFloat(b.getAttribute('data-price')); });
+    } else if (filterState.sort === 'price-desc') {
+      sorted.sort(function (a, b) { return parseFloat(b.getAttribute('data-price')) - parseFloat(a.getAttribute('data-price')); });
+    } else if (filterState.sort === 'name-asc') {
+      sorted.sort(function (a, b) { return (a.getAttribute('data-name') || '').localeCompare(b.getAttribute('data-name') || ''); });
+    }
+    sorted.forEach(function (card) { grid.appendChild(card); });
+
+    if (resultCount) {
+      resultCount.textContent = 'Showing ' + visible.length + ' product' + (visible.length === 1 ? '' : 's');
+    }
+  }
+
+  // Category chips
+  chips.forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      filterState.category = chip.getAttribute('data-filter') || 'all';
+      setActive(chips,       function (b) { return b === chip; });
+      setActive(sidebarCats, function (b) { return (b.getAttribute('data-filter') || '') === filterState.category; });
+      applyFilters();
+    });
+  });
+
+  // Sidebar categories
+  sidebarCats.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      filterState.category = btn.getAttribute('data-filter') || 'all';
+      setActive(sidebarCats, function (b) { return b === btn; });
+      setActive(chips,       function (b) { return (b.getAttribute('data-filter') || '') === filterState.category; });
+      applyFilters();
+    });
+  });
+
+  // Sidebar price
+  sidebarPrices.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      filterState.price = btn.getAttribute('data-price') || 'all';
+      setActive(sidebarPrices, function (b) { return b === btn; });
+      applyFilters();
+    });
+  });
+
+  // Search (debounced)
+  var searchTimer;
+  if (searchInput) {
+    searchInput.addEventListener('input', function () {
+      filterState.query = searchInput.value || '';
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(applyFilters, 300);
+    });
+  }
+
+  // Sort
+  if (sortSelect) {
+    sortSelect.addEventListener('change', function () {
+      filterState.sort = sortSelect.value || 'featured';
+      applyFilters();
+    });
+  }
+
+  // Initial count
+  applyFilters();
+})();
+</script>
+
+</body>
+</html>
