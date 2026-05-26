@@ -98,19 +98,14 @@
     }, 3500);
   }
 
-  // ── Shop-page grid: filter / sort / search / AJAX ───────────────────────────
-  // Activates when [rookidroid_shop_page] or [rookidroid_shop_grid] is on the page.
-  // Uses server-side AJAX filtering when rdShop.filterNonce is available,
-  // otherwise falls back to client-side DOM filtering (static HTML preview).
+  // ── Shop-page grid: filter / sort / search ───────────────────────────────────
+  // Activates when [rookidroid_shop_grid] is on the page alongside the
+  // standard shop-page filter controls (#productSearch, #sortSelect, etc.).
   $(function () {
     var $grid = $('#productGrid');
     if (!$grid.length) return;
 
-    var limit   = parseInt($grid.data('limit')   || 12, 10);
-    var columns = parseInt($grid.data('columns') || 3,  10);
-    var useAjax = typeof rdShop !== 'undefined' && !!rdShop.filterNonce;
-
-    var filterState = { category: 'all', price: 'all', query: '', sort: 'featured', page: 1 };
+    var filterState = { category: 'all', price: 'all', query: '', sort: 'featured' };
 
     var $resultCount   = $('#resultCount');
     var $searchInput   = $('#productSearch');
@@ -118,10 +113,6 @@
     var $chips         = $('#chipCategoryFilter .chip');
     var $sidebarCats   = $('#sidebarCategoryFilter button');
     var $sidebarPrices = $('#sidebarPriceFilter button');
-    var $pagination    = $('#shopPagination');
-    var searchTimer;
-
-    // ── Helpers ──────────────────────────────────────────────────────────────
 
     function parsePriceRange(val) {
       if (val === 'all') return null;
@@ -129,29 +120,16 @@
       return { min: +parts[0], max: +parts[1] };
     }
 
-    function syncActive($btns, testFn) {
-      $btns.each(function () { $(this).toggleClass('is-active', testFn(this)); });
-    }
-
-    function scrollToGrid() {
-      if (!$grid.length) return;
-      var top = $grid.offset().top - 110;
-      if (top < $(window).scrollTop()) {
-        $('html, body').animate({ scrollTop: top }, 280);
-      }
-    }
-
-    // ── Client-side filter (fallback for static HTML preview) ────────────────
-
-    function applyFiltersLocal() {
+    function applyFilters() {
+      // Re-query live so shortcode-injected cards are always found
       var cards  = $grid.find('.product-card').toArray();
       var range  = parsePriceRange(filterState.price);
       var q      = filterState.query.trim().toLowerCase();
 
       var visible = cards.filter(function (card) {
         var cat   = card.getAttribute('data-category') || '';
-        var name  = (card.getAttribute('data-name')   || '').toLowerCase();
-        var price = +(card.getAttribute('data-price') || 0);
+        var name  = (card.getAttribute('data-name')    || '').toLowerCase();
+        var price = +(card.getAttribute('data-price')  || 0);
         return (filterState.category === 'all' || cat === filterState.category)
             && (!q     || name.indexOf(q) !== -1)
             && (!range || (price >= range.min && price <= range.max));
@@ -161,98 +139,22 @@
       $(visible).css('display', '');
 
       var sorted = visible.slice();
-      if (filterState.sort === 'price-asc') {
-        sorted.sort(function (a, b) { return +a.getAttribute('data-price') - +b.getAttribute('data-price'); });
-      } else if (filterState.sort === 'price-desc') {
-        sorted.sort(function (a, b) { return +b.getAttribute('data-price') - +a.getAttribute('data-price'); });
-      } else if (filterState.sort === 'name-asc') {
-        sorted.sort(function (a, b) {
-          return (a.getAttribute('data-name') || '').localeCompare(b.getAttribute('data-name') || '');
-        });
-      }
+      if (filterState.sort === 'price-asc')  sorted.sort(function (a, b) { return +a.getAttribute('data-price') - +b.getAttribute('data-price'); });
+      if (filterState.sort === 'price-desc') sorted.sort(function (a, b) { return +b.getAttribute('data-price') - +a.getAttribute('data-price'); });
+      if (filterState.sort === 'name-asc')   sorted.sort(function (a, b) { return (a.getAttribute('data-name') || '').localeCompare(b.getAttribute('data-name') || ''); });
+
       $.each(sorted, function (_, card) { $grid.append(card); });
 
       if ($resultCount.length) {
         $resultCount.text('Showing ' + visible.length + ' product' + (visible.length === 1 ? '' : 's'));
       }
-      $pagination.html('');
     }
 
-    // ── AJAX filter (WordPress context) ─────────────────────────────────────
-
-    function applyFiltersAjax() {
-      $grid.addClass('rd-grid--loading');
-
-      $.ajax({
-        url:    rdShop.ajaxUrl,
-        method: 'POST',
-        data: {
-          action:      'rd_filter_products',
-          nonce:       rdShop.filterNonce,
-          category:    filterState.category === 'all' ? '' : filterState.category,
-          search:      filterState.query,
-          sort:        filterState.sort,
-          price_range: filterState.price,
-          page:        filterState.page,
-          limit:       limit,
-          columns:     columns,
-        },
-        success: function (resp) {
-          $grid.removeClass('rd-grid--loading');
-          if (resp.success) {
-            $grid.html(resp.data.html);
-            if ($resultCount.length) {
-              var t = resp.data.total;
-              $resultCount.text('Showing ' + t + ' product' + (t === 1 ? '' : 's'));
-            }
-            renderPagination(resp.data.page, resp.data.total_pages);
-            scrollToGrid();
-          }
-        },
-        error: function () {
-          $grid.removeClass('rd-grid--loading');
-        },
-      });
+    function syncActive($btns, testFn) {
+      $btns.each(function () { $(this).toggleClass('is-active', testFn(this)); });
     }
 
-    // ── Pagination (AJAX mode) ────────────────────────────────────────────────
-
-    function renderPagination(current, total) {
-      if (!$pagination.length || total <= 1) { $pagination.html(''); return; }
-      var html   = '';
-      var start  = Math.max(1, current - 2);
-      var end    = Math.min(total, current + 2);
-
-      if (current > 1) {
-        html += '<button class="rd-page-btn" data-page="' + (current - 1) + '" aria-label="Previous">&#8249;</button>';
-      }
-      if (start > 1) html += '<button class="rd-page-btn" data-page="1">1</button>';
-      if (start > 2) html += '<span class="rd-page-ellipsis">&#8230;</span>';
-      for (var i = start; i <= end; i++) {
-        html += '<button class="rd-page-btn' + (i === current ? ' is-active' : '') + '" data-page="' + i + '">' + i + '</button>';
-      }
-      if (end < total - 1) html += '<span class="rd-page-ellipsis">&#8230;</span>';
-      if (end < total)     html += '<button class="rd-page-btn" data-page="' + total + '">' + total + '</button>';
-      if (current < total) {
-        html += '<button class="rd-page-btn" data-page="' + (current + 1) + '" aria-label="Next">&#8250;</button>';
-      }
-      $pagination.html(html);
-
-      $pagination.find('[data-page]').on('click', function () {
-        filterState.page = parseInt($(this).data('page'), 10);
-        applyFiltersAjax();
-      });
-    }
-
-    // ── Dispatcher ───────────────────────────────────────────────────────────
-
-    function applyFilters() {
-      filterState.page = 1;
-      if (useAjax) { applyFiltersAjax(); } else { applyFiltersLocal(); }
-    }
-
-    // ── Event bindings ────────────────────────────────────────────────────────
-
+    // Category chips (top bar)
     $chips.on('click', function () {
       filterState.category = $(this).data('filter') || 'all';
       syncActive($chips,       function (b) { return b === this; }.bind(this));
@@ -260,6 +162,7 @@
       applyFilters();
     });
 
+    // Sidebar category buttons
     $sidebarCats.on('click', function () {
       filterState.category = $(this).data('filter') || 'all';
       syncActive($sidebarCats, function (b) { return b === this; }.bind(this));
@@ -267,33 +170,26 @@
       applyFilters();
     });
 
+    // Sidebar price buttons
     $sidebarPrices.on('click', function () {
       filterState.price = $(this).data('price') || 'all';
       syncActive($sidebarPrices, function (b) { return b === this; }.bind(this));
       applyFilters();
     });
 
+    // Search
     $searchInput.on('input', function () {
       filterState.query = this.value || '';
-      clearTimeout(searchTimer);
-      searchTimer = setTimeout(applyFilters, 350);
+      applyFilters();
     });
 
+    // Sort
     $sortSelect.on('change', function () {
       filterState.sort = this.value || 'featured';
       applyFilters();
     });
 
-    // Initial render
-    if (!useAjax) {
-      applyFiltersLocal();
-    } else {
-      // Grid already server-rendered; just show initial count
-      if ($resultCount.length) {
-        var initialCount = $grid.find('.product-card').length;
-        $resultCount.text('Showing ' + initialCount + ' product' + (initialCount === 1 ? '' : 's'));
-      }
-    }
+    applyFilters();
   });
 
 })(jQuery);
