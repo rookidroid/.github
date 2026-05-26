@@ -2,6 +2,21 @@
 (function ($) {
   'use strict';
 
+  // ── Shop banner: move to full-width position before Neve's column layout ──────
+  // The banner is injected inside the flex .row by woocommerce_before_main_content.
+  // We move it to be the first child of <main> so it spans the full content width
+  // without being constrained by flex-shrink or the column container.
+  (function () {
+    var banner = document.querySelector('.rd-shop-banner');
+    if (!banner) return;
+    var main = document.querySelector('main.neve-main') ||
+               document.querySelector('main#primary')  ||
+               document.querySelector('main');
+    if (main) {
+      main.insertBefore(banner, main.firstChild);
+    }
+  }());
+
   // ── Tab switching ────────────────────────────────────────────────────────────
   $(document).on('click', '.rd-tab-btn', function () {
     var $btn     = $(this);

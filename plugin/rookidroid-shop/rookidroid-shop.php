@@ -3,7 +3,7 @@
  * Plugin Name:  RookiDroid Shop
  * Plugin URI:   https://rookidroid.com/
  * Description:  Custom-styled WooCommerce product grid shortcodes matching the RookiDroid brand design. Provides [rookidroid_products], [rookidroid_product_tabs], and [rookidroid_shop_grid].
- * Version:      1.1.0
+ * Version:      1.3.1
  * Author:       Zhengyu Peng
  * Author URI:   https://rookidroid.com/
  * License:      GPL-2.0-or-later
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'RD_SHOP_VERSION', '1.1.0' );
+define( 'RD_SHOP_VERSION', '1.3.1' );
 define( 'RD_SHOP_URL',     plugin_dir_url( __FILE__ ) );
 define( 'RD_SHOP_PATH',    plugin_dir_path( __FILE__ ) );
 
@@ -62,6 +62,31 @@ function rd_shop_init(): void {
     add_shortcode( 'rookidroid_shop_grid',    'rd_shop_shop_grid_shortcode' );
     add_action( 'wp_ajax_rd_add_to_cart',        'rd_shop_ajax_add_to_cart' );
     add_action( 'wp_ajax_nopriv_rd_add_to_cart', 'rd_shop_ajax_add_to_cart' );
+    add_filter( 'wc_get_template_part',         'rd_shop_get_template_part', 9999, 3 );
+    add_filter( 'woocommerce_locate_template',   'rd_shop_locate_template', 9999, 3 );
+}
+
+// ── Template override: replace WooCommerce loop card with RookiDroid card ─────
+// Neve (and Sparks for WooCommerce) hooks wc_get_template_part before
+// woocommerce_locate_template fires — so we need both filters.
+function rd_shop_get_template_part( string $template, string $slug, string $name ): string {
+    if ( 'content' === $slug && 'product' === $name ) {
+        $custom = RD_SHOP_PATH . 'woocommerce/content-product.php';
+        if ( file_exists( $custom ) ) {
+            return $custom;
+        }
+    }
+    return $template;
+}
+
+function rd_shop_locate_template( string $template, string $template_name, string $template_path ): string {
+    if ( 'content-product.php' === $template_name ) {
+        $custom = RD_SHOP_PATH . 'woocommerce/content-product.php';
+        if ( file_exists( $custom ) ) {
+            return $custom;
+        }
+    }
+    return $template;
 }
 
 // ── Assets ────────────────────────────────────────────────────────────────────
