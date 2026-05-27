@@ -1,9 +1,9 @@
-<?php
+﻿<?php
 /**
  * Plugin Name:  RookiDroid Shop
  * Plugin URI:   https://rookidroid.com/
  * Description:  Custom-styled WooCommerce product grid shortcodes matching the RookiDroid brand design. Provides [rookidroid_products], [rookidroid_product_tabs], and [rookidroid_shop_grid].
- * Version:      1.3.1
+ * Version:      1.4.3
  * Author:       Zhengyu Peng
  * Author URI:   https://rookidroid.com/
  * License:      GPL-2.0-or-later
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'RD_SHOP_VERSION', '1.3.1' );
+define( 'RD_SHOP_VERSION', '1.4.3' );
 define( 'RD_SHOP_URL',     plugin_dir_url( __FILE__ ) );
 define( 'RD_SHOP_PATH',    plugin_dir_path( __FILE__ ) );
 
@@ -64,6 +64,84 @@ function rd_shop_init(): void {
     add_action( 'wp_ajax_nopriv_rd_add_to_cart', 'rd_shop_ajax_add_to_cart' );
     add_filter( 'wc_get_template_part',         'rd_shop_get_template_part', 9999, 3 );
     add_filter( 'woocommerce_locate_template',   'rd_shop_locate_template', 9999, 3 );
+    add_filter( 'woocommerce_show_page_title',   'rd_shop_hide_page_title' );
+    add_action( 'neve_before_primary',           'rd_shop_render_banner' );
+}
+
+// ── Shop page hero banner ────────────────────────────────────────────────────
+function rd_shop_hide_page_title( $show ) {
+    return ( is_shop() || is_product_category() ) ? false : $show;
+}
+
+function rd_shop_render_banner(): void {
+    if ( ! is_shop() && ! is_product_category() ) {
+        return;
+    }
+
+    $home_url = home_url( '/' );
+    $shop_url = wc_get_page_permalink( 'shop' );
+
+    if ( is_shop() ) {
+        $breadcrumbs = [
+            [ 'url' => $home_url, 'label' => __( 'Home', 'rookidroid-shop' ) ],
+            [ 'url' => '',        'label' => __( 'Shop', 'rookidroid-shop' ) ],
+        ];
+        $pre_title = 'Build Your Next ';
+        $highlight = 'Robot Project';
+        $subtitle  = __( 'Explore 3D models, control electronics, software bundles, and practical gadgets designed in-house and tested in the RookiDroid workshop.', 'rookidroid-shop' );
+    } else {
+        $term     = get_queried_object();
+        $cat_name = ( $term instanceof WP_Term ) ? $term->name : __( 'Products', 'rookidroid-shop' );
+        $cat_desc = ( $term instanceof WP_Term && $term->description )
+            ? wp_strip_all_tags( $term->description )
+            : __( 'Browse all products in this category, designed in-house and tested in the RookiDroid workshop.', 'rookidroid-shop' );
+
+        $breadcrumbs = [
+            [ 'url' => $home_url, 'label' => __( 'Home', 'rookidroid-shop' ) ],
+            [ 'url' => $shop_url, 'label' => __( 'Shop', 'rookidroid-shop' ) ],
+        ];
+
+        // Insert parent category for sub-categories
+        if ( $term instanceof WP_Term && $term->parent ) {
+            $parent = get_term( $term->parent, 'product_cat' );
+            if ( $parent instanceof WP_Term ) {
+                $parent_link   = get_term_link( $parent );
+                $breadcrumbs[] = [
+                    'url'   => is_wp_error( $parent_link ) ? '' : $parent_link,
+                    'label' => $parent->name,
+                ];
+            }
+        }
+
+        $breadcrumbs[] = [ 'url' => '', 'label' => $cat_name ];
+
+        $pre_title = 'Explore ';
+        $highlight = $cat_name;
+        $subtitle  = $cat_desc;
+    }
+
+    // Build breadcrumb HTML (each value individually escaped)
+    $crumb_html = '';
+    $last_idx   = count( $breadcrumbs ) - 1;
+    foreach ( $breadcrumbs as $i => $crumb ) {
+        if ( $i < $last_idx ) {
+            $crumb_html .= '<a href="' . esc_url( $crumb['url'] ) . '">' . esc_html( $crumb['label'] ) . '</a>';
+            $crumb_html .= '<span aria-hidden="true"> / </span>';
+        } else {
+            $crumb_html .= '<span>' . esc_html( $crumb['label'] ) . '</span>';
+        }
+    }
+    ?>
+    <div class="rd-shop-banner">
+        <div class="rd-shop-banner__inner">
+            <nav class="rd-shop-banner__breadcrumb" aria-label="<?php esc_attr_e( 'Breadcrumb', 'rookidroid-shop' ); ?>">
+                <?php echo $crumb_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped per-item above ?>
+            </nav>
+            <h1 class="rd-shop-banner__title"><?php echo esc_html( $pre_title ); ?><span class="rd-shop-banner__highlight"><?php echo esc_html( $highlight ); ?></span></h1>
+            <p class="rd-shop-banner__subtitle"><?php echo esc_html( $subtitle ); ?></p>
+        </div>
+    </div>
+    <?php
 }
 
 // ── Template override: replace WooCommerce loop card with RookiDroid card ─────
@@ -103,6 +181,85 @@ function rd_shop_enqueue_assets(): void {
         [ 'rd-shop-fonts' ],
         RD_SHOP_VERSION
     );
+
+    // ── Shop banner inline CSS ─────────────────────────────────────────────
+    // Injected after the main stylesheet so these rules always win regardless
+    // of what version of rookidroid-shop.css is on the server.
+    // neve_before_primary fires inside Neve's max-width wrapper, so the
+    // banner needs the 100vw / translateX(-50%) full-bleed technique.
+    wp_add_inline_style( 'rd-shop', '
+        body.post-type-archive-product .nv-breadcrumbs,
+        body.post-type-archive-product .neve-breadcrumbs,
+        body.post-type-archive-product nav.woocommerce-breadcrumb,
+        body.tax-product_cat .nv-breadcrumbs,
+        body.tax-product_cat .neve-breadcrumbs,
+        body.tax-product_cat nav.woocommerce-breadcrumb {
+            display: none !important;
+        }
+        .rd-shop-banner {
+            position: relative !important;
+            width: 100vw !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            overflow: hidden !important;
+            background: linear-gradient(120deg, #f9f9fb 50%, #f3e5f5 100%) !important;
+            padding: 52px 0 48px !important;
+            line-height: normal !important;
+            margin-bottom: 0 !important;
+        }
+        .rd-shop-banner__inner {
+            max-width: 1200px !important;
+            margin: 0 auto !important;
+            padding: 0 24px !important;
+            position: relative !important;
+            z-index: 1 !important;
+        }
+        .rd-shop-banner::after {
+            content: "" !important;
+            position: absolute !important;
+            top: 0; right: 0;
+            width: 50%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'64\' height=\'64\'%3E%3Cpath d=\'M0 32 L32 0 M32 64 L64 32 M-16 48 L48 -16 M16 80 L80 16\' stroke=\'%239c27b0\' stroke-width=\'0.6\' fill=\'none\'/%3E%3C/svg%3E") !important;
+            background-repeat: repeat !important;
+            opacity: 0.10 !important;
+            pointer-events: none !important;
+        }
+        .rd-shop-banner__breadcrumb {
+            display: flex !important;
+            align-items: center !important;
+            font-size: .85rem !important;
+            color: #8e8ea0 !important;
+            margin-bottom: 18px !important;
+        }
+        .rd-shop-banner__breadcrumb a {
+            color: #8e8ea0 !important;
+            text-decoration: none !important;
+        }
+        .rd-shop-banner__breadcrumb a:hover { color: #9c27b0 !important; }
+        .rd-shop-banner__breadcrumb span { margin: 0 5px !important; }
+        .rd-shop-banner__breadcrumb span:last-child { margin: 0 !important; }
+        .rd-shop-banner__title {
+            font-family: "Space Grotesk", "Inter", system-ui, sans-serif !important;
+            font-weight: 800 !important;
+            font-size: clamp(2rem, 4.5vw, 2.8rem) !important;
+            color: #1a1a2e !important;
+            margin: 0 0 14px !important;
+            line-height: 1.15 !important;
+        }
+        .rd-shop-banner__highlight { color: #9c27b0 !important; }
+        .rd-shop-banner__subtitle {
+            font-size: 1rem !important;
+            color: #555770 !important;
+            max-width: 560px !important;
+            line-height: 1.7 !important;
+            margin: 0 !important;
+        }
+        @media (max-width: 680px) {
+            .rd-shop-banner { padding: 36px 0 32px !important; }
+            .rd-shop-banner__inner { padding: 0 16px !important; }
+        }
+    ' );
+
     wp_enqueue_script(
         'rd-shop',
         RD_SHOP_URL . 'assets/js/rookidroid-shop.js',
