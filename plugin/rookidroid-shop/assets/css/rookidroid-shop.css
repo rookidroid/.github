@@ -330,6 +330,8 @@
 }
 .rd-btn--outline:hover {
   background: var(--rd-primary-subtle);
+  color: var(--rd-primary) !important;
+  border: 2px solid var(--rd-primary) !important;
   text-decoration: none;
 }
 .rd-btn--disabled {

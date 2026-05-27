@@ -98,9 +98,9 @@
       background: transparent; color: var(--clr-primary);
       border: 2px solid var(--clr-primary);
     }
-    .btn--outline:hover { background: var(--clr-primary-subtle); }
+    .btn--outline:hover { background: var(--clr-primary-subtle) !important; color: var(--clr-primary) !important; border: 2px solid var(--clr-primary) !important; }
     .btn--ghost { background: transparent; color: var(--clr-primary); padding: 8px 0; }
-    .btn--ghost:hover { gap: 12px; }
+    .btn--ghost:hover { gap: 12px; background: transparent !important;  color: var(--clr-primary) !important; }
     .btn--sm { font-size: .85rem; padding: 9px 18px; }
 
     /* ── Hero ────────────────────────────────────────────── */
@@ -327,7 +327,7 @@
     .custom-cta__item-icon { font-size: 1.8rem; margin-bottom: 8px; }
     .custom-cta__item-label { font-size: .85rem; font-weight: 500; }
     .btn--white { background: #fff; color: var(--clr-primary); }
-    .btn--white:hover { background: var(--clr-primary-subtle); transform: translateY(-1px); }
+    .btn--white:hover { background: var(--clr-primary-subtle); transform: translateY(-1px); color: var(--clr-primary) !important;}
 
     /* ── Testimonials / Social Proof ────────────────────── */
     .social-row {
@@ -706,25 +706,6 @@
           </a>
         </div>
       </div>
-    </div>
-  </div>
-</section>
-
-
-<!-- ═══════════════════════════════════════════════════════
-     NEWSLETTER
-     ═══════════════════════════════════════════════════════ -->
-<section class="section">
-  <div class="container">
-    <div class="newsletter">
-      <div class="section__tag">Stay Updated</div>
-      <h2 class="section__title">Get New Project Alerts</h2>
-      <p class="section__subtitle">Be the first to know when new robots, gadgets, or design files drop.</p>
-      <form class="newsletter__form" onsubmit="return false;">
-        <input type="email" class="newsletter__input" placeholder="Enter your email" aria-label="Email address" />
-        <button type="submit" class="btn btn--primary">Subscribe</button>
-      </form>
-      <p style="font-size:.78rem; color:var(--clr-text-muted); margin-top:10px;">No spam. Unsubscribe anytime.</p>
     </div>
   </div>
 </section>
