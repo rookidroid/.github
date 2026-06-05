@@ -1,9 +1,9 @@
-﻿<?php
+<?php
 /**
  * Plugin Name:  RookiDroid Shop
  * Plugin URI:   https://rookidroid.com/
- * Description:  Custom-styled WooCommerce product grid shortcodes matching the RookiDroid brand design. Provides [rookidroid_products], [rookidroid_product_tabs], and [rookidroid_shop_grid].
- * Version:      1.4.4
+ * Description:  Custom-styled WooCommerce product grid shortcodes matching the RookiDroid brand design. Provides [rookidroid_products], [rookidroid_product_tabs], [rookidroid_shop_grid], and [rookidroid_featured_products].
+ * Version:      1.5.0
  * Author:       Zhengyu Peng
  * Author URI:   https://rookidroid.com/
  * License:      GPL-2.0-or-later
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'RD_SHOP_VERSION', '1.4.4' );
+define( 'RD_SHOP_VERSION', '1.5.0' );
 define( 'RD_SHOP_URL',     plugin_dir_url( __FILE__ ) );
 define( 'RD_SHOP_PATH',    plugin_dir_path( __FILE__ ) );
 
@@ -57,15 +57,22 @@ function rd_shop_init(): void {
     }
 
     add_action( 'wp_enqueue_scripts', 'rd_shop_enqueue_assets' );
-    add_shortcode( 'rookidroid_products',     'rd_shop_products_shortcode' );
-    add_shortcode( 'rookidroid_product_tabs', 'rd_shop_product_tabs_shortcode' );
-    add_shortcode( 'rookidroid_shop_grid',    'rd_shop_shop_grid_shortcode' );
+    add_shortcode( 'rookidroid_products',          'rd_shop_products_shortcode' );
+    add_shortcode( 'rookidroid_product_tabs',      'rd_shop_product_tabs_shortcode' );
+    add_shortcode( 'rookidroid_shop_grid',         'rd_shop_shop_grid_shortcode' );
+    add_shortcode( 'rookidroid_featured_products', 'rd_shop_featured_products_shortcode' );
     add_action( 'wp_ajax_rd_add_to_cart',        'rd_shop_ajax_add_to_cart' );
     add_action( 'wp_ajax_nopriv_rd_add_to_cart', 'rd_shop_ajax_add_to_cart' );
     add_filter( 'wc_get_template_part',         'rd_shop_get_template_part', 9999, 3 );
     add_filter( 'woocommerce_locate_template',   'rd_shop_locate_template', 9999, 3 );
     add_filter( 'woocommerce_show_page_title',   'rd_shop_hide_page_title' );
     add_action( 'neve_before_primary',           'rd_shop_render_banner' );
+
+    // Admin-only hooks
+    add_action( 'admin_menu',                         'rd_shop_admin_menu' );
+    add_action( 'admin_enqueue_scripts',              'rd_shop_admin_enqueue' );
+    add_action( 'admin_post_rd_shop_save_featured',   'rd_shop_admin_save' );
+    add_action( 'wp_ajax_rd_search_products',         'rd_shop_ajax_search_products' );
 }
 
 // ── Shop page hero banner ────────────────────────────────────────────────────
@@ -862,3 +869,825 @@ function rd_shop_ajax_add_to_cart(): void {
         'cart_url'   => wc_get_cart_url(),
     ] );
 }
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ── Admin: Featured Products Config ──────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/** Register the WooCommerce → RookiDroid Featured submenu */
+function rd_shop_admin_menu(): void {
+    add_submenu_page(
+        'woocommerce',
+        __( 'RookiDroid Featured', 'rookidroid-shop' ),
+        __( 'RookiDroid Featured', 'rookidroid-shop' ),
+        'manage_options',
+        'rd-shop-featured',
+        'rd_shop_admin_page'
+    );
+}
+
+/** Enqueue admin assets only on our settings page */
+function rd_shop_admin_enqueue( string $hook ): void {
+    if ( 'woocommerce_page_rd-shop-featured' !== $hook ) {
+        return;
+    }
+    // Inline admin styles — no extra file needed
+    wp_add_inline_style( 'wp-admin', rd_shop_admin_css() );
+
+    // Load saved products HERE, before wp_head() prints scripts.
+    // Calling wp_add_inline_script() from the page-render callback fires
+    // after the <head> is already output, so data would be lost.
+    $saved_ids      = array_filter( array_map( 'absint', explode( ',', get_option( 'rd_shop_featured_product_ids', '' ) ) ) );
+    $saved_products = [];
+    foreach ( $saved_ids as $pid ) {
+        $p = wc_get_product( $pid );
+        if ( $p ) {
+            $thumb_id       = $p->get_image_id();
+            $thumb_url      = $thumb_id ? wp_get_attachment_image_url( $thumb_id, [ 48, 48 ] ) : '';
+            $saved_products[] = [
+                'id'    => $p->get_id(),
+                'name'  => $p->get_name(),
+                'thumb' => $thumb_url ?: '',
+            ];
+        }
+    }
+
+    // Inline admin JS
+    wp_enqueue_script( 'jquery' );
+    wp_add_inline_script( 'jquery', rd_shop_admin_js() );
+    wp_localize_script( 'jquery', 'rdShopAdmin', [
+        'ajaxUrl'       => admin_url( 'admin-ajax.php' ),
+        'nonce'         => wp_create_nonce( 'rd_search_products' ),
+        'savedProducts' => $saved_products,
+        'i18n'          => [
+            'searching'   => __( 'Searching…', 'rookidroid-shop' ),
+            'noResults'   => __( 'No products found.', 'rookidroid-shop' ),
+            'remove'      => __( 'Remove', 'rookidroid-shop' ),
+            'placeholder' => __( 'Type a product name…', 'rookidroid-shop' ),
+        ],
+    ] );
+}
+
+/** Returns the inline CSS string for the admin page */
+function rd_shop_admin_css(): string {
+    return '
+/* ── RookiDroid Shop Admin Page ── */
+#rd-featured-wrap {
+    max-width: 860px;
+    margin: 32px 20px 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+#rd-featured-wrap h1.rd-admin-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 6px;
+}
+#rd-featured-wrap h1.rd-admin-title span.rd-admin-badge {
+    background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+    color: #fff;
+    font-size: .7rem;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    border-radius: 20px;
+    padding: 2px 10px;
+}
+.rd-admin-card {
+    background: #fff;
+    border: 1px solid #e0e0e8;
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+}
+.rd-admin-card h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin: 0 0 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f5;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.rd-admin-card h2 svg { flex-shrink: 0; color: #9c27b0; }
+
+/* Search bar */
+.rd-search-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+#rd-product-search {
+    flex: 1;
+    border: 1.5px solid #d0d0df;
+    border-radius: 8px;
+    padding: 9px 14px;
+    font-size: .95rem;
+    outline: none;
+    transition: border-color .2s;
+}
+#rd-product-search:focus { border-color: #9c27b0; }
+#rd-search-results {
+    background: #fff;
+    border: 1.5px solid #d0d0df;
+    border-radius: 8px;
+    max-height: 240px;
+    overflow-y: auto;
+    display: none;
+    box-shadow: 0 6px 24px rgba(0,0,0,.10);
+    position: relative;
+    z-index: 100;
+    margin-top: -6px;
+}
+.rd-search-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: background .15s;
+    border-bottom: 1px solid #f4f4f8;
+}
+.rd-search-item:last-child { border-bottom: none; }
+.rd-search-item:hover { background: #f8f4fc; }
+.rd-search-item img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+    background: #f0f0f5;
+}
+.rd-search-item .rd-si-name { font-size: .9rem; font-weight: 500; color: #1a1a2e; }
+.rd-search-item .rd-si-id   { font-size: .78rem; color: #8e8ea0; margin-top: 2px; }
+.rd-search-msg { padding: 14px; color: #8e8ea0; font-size: .9rem; text-align: center; }
+.rd-search-add-btn {
+    background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 20px;
+    font-size: .9rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    display: none;
+    transition: opacity .2s;
+}
+.rd-search-add-btn:hover { opacity: .88; }
+
+/* Selected products list */
+#rd-selected-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 48px;
+}
+.rd-selected-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #fafafa;
+    border: 1.5px solid #e8e8f0;
+    border-radius: 10px;
+    padding: 10px 14px;
+    transition: border-color .2s;
+}
+.rd-selected-item:hover { border-color: #c8b0d8; }
+.rd-selected-item img {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 7px;
+    background: #f0f0f5;
+    flex-shrink: 0;
+}
+.rd-selected-info { flex: 1; }
+.rd-selected-info .rd-si-name { font-size: .92rem; font-weight: 600; color: #1a1a2e; }
+.rd-selected-info .rd-si-id   { font-size: .78rem; color: #8e8ea0; margin-top: 2px; }
+.rd-remove-btn {
+    background: none;
+    border: 1.5px solid #e0e0ea;
+    border-radius: 7px;
+    padding: 5px 11px;
+    font-size: .8rem;
+    font-weight: 600;
+    color: #c0392b;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+    flex-shrink: 0;
+}
+.rd-remove-btn:hover { background: #ffeaea; border-color: #c0392b; }
+.rd-drag-handle {
+    cursor: grab;
+    color: #c0c0cc;
+    font-size: 1.1rem;
+    user-select: none;
+    margin-right: 4px;
+}
+.rd-empty-state {
+    text-align: center;
+    padding: 28px 0;
+    color: #8e8ea0;
+    font-size: .9rem;
+    border: 2px dashed #e0e0ea;
+    border-radius: 10px;
+}
+.rd-empty-state svg { margin-bottom: 8px; opacity: .4; }
+
+/* Save button */
+.rd-save-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+#rd-save-btn {
+    background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+    color: #fff;
+    border: none;
+    border-radius: 9px;
+    padding: 11px 32px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity .2s, transform .1s;
+    letter-spacing: .02em;
+}
+#rd-save-btn:hover { opacity: .88; transform: translateY(-1px); }
+#rd-save-btn:active { transform: translateY(0); }
+.rd-admin-notice {
+    font-size: .88rem;
+    color: #2e7d32;
+    font-weight: 500;
+    display: none;
+}
+.rd-shortcode-hint {
+    background: #f8f4fc;
+    border: 1px solid #d4a8e8;
+    border-radius: 9px;
+    padding: 14px 18px;
+}
+.rd-shortcode-hint code {
+    background: #ede7f6;
+    color: #6a1b9a;
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-size: .88rem;
+}
+.rd-shortcode-hint p { margin: 4px 0; font-size: .88rem; color: #555770; }
+.rd-count-badge {
+    background: #ede7f6;
+    color: #7b1fa2;
+    font-size: .72rem;
+    font-weight: 700;
+    border-radius: 20px;
+    padding: 2px 9px;
+    margin-left: 6px;
+}
+    ';
+}
+
+/** Returns the inline JS string for the admin page */
+function rd_shop_admin_js(): string {
+    return '
+(function($){
+    var selectedProducts = [];
+    var searchTimer = null;
+    var selectedCandidate = null;
+
+    function renderSelected() {
+        var $list = $("#rd-selected-list");
+        $list.empty();
+        $("#rd-count-badge").text(selectedProducts.length);
+        if (selectedProducts.length === 0) {
+            $list.append(
+                \'<div class="rd-empty-state">\' +
+                \'<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>\' +
+                \'<br>No products selected yet. Use the search above to add some.\' +
+                \'</div>\'
+            );
+            $("#rd-hidden-ids").val("");
+            return;
+        }
+        $.each(selectedProducts, function(i, p) {
+            var img = p.thumb
+                ? \'<img src="\' + p.thumb + \'" alt="\' + $("<div>").text(p.name).html() + \'">\' 
+                : \'<img src="" alt="" style="background:#e8e0f0;">\';
+            var html = \'<div class="rd-selected-item" data-id="\' + p.id + \'">\' +
+                \'<span class="rd-drag-handle" title="Drag to reorder">⠿</span>\' +
+                img +
+                \'<div class="rd-selected-info">\' +
+                    \'<div class="rd-si-name">\' + $("<div>").text(p.name).html() + \'</div>\' +
+                    \'<div class="rd-si-id\">ID: \' + p.id + \'</div>\' +
+                \'</div>\' +
+                \'<button class="rd-remove-btn" data-id="\' + p.id + \'">✕ Remove</button>\' +
+                \'</div>\';
+            $list.append(html);
+        });
+        // Update hidden input
+        $("#rd-hidden-ids").val($.map(selectedProducts, function(p){ return p.id; }).join(","));
+
+        // Sortable drag support
+        makeSortable($list[0]);
+    }
+
+    function makeSortable(el) {
+        var dragging = null;
+        $(el).find(".rd-selected-item").each(function() {
+            var item = this;
+            item.draggable = true;
+            item.addEventListener("dragstart", function(e) {
+                dragging = item;
+                setTimeout(function(){ $(item).css("opacity","0.4"); }, 0);
+            });
+            item.addEventListener("dragend", function() {
+                $(item).css("opacity","");
+                dragging = null;
+                // Rebuild order
+                var newOrder = [];
+                $(el).find(".rd-selected-item").each(function(){
+                    var id = parseInt($(this).data("id"), 10);
+                    var found = selectedProducts.find(function(p){ return p.id === id; });
+                    if (found) newOrder.push(found);
+                });
+                selectedProducts = newOrder;
+                $("#rd-hidden-ids").val($.map(selectedProducts, function(p){ return p.id; }).join(","));
+            });
+            item.addEventListener("dragover", function(e) {
+                e.preventDefault();
+                if (dragging && dragging !== item) {
+                    var rect = item.getBoundingClientRect();
+                    var mid  = rect.top + rect.height / 2;
+                    if (e.clientY < mid) {
+                        el.insertBefore(dragging, item);
+                    } else {
+                        el.insertBefore(dragging, item.nextSibling);
+                    }
+                }
+            });
+        });
+    }
+
+    function addProduct(p) {
+        var exists = selectedProducts.some(function(x){ return x.id === p.id; });
+        if (!exists) {
+            selectedProducts.push(p);
+            renderSelected();
+        }
+        clearSearch();
+    }
+
+    function clearSearch() {
+        $("#rd-product-search").val("");
+        $("#rd-search-results").hide().empty();
+        $("#rd-search-add-btn").hide();
+        selectedCandidate = null;
+    }
+
+    $(document).ready(function(){
+
+        // ── Pre-populate from saved option (injected via wp_localize_script extra data)
+        if (typeof rdShopAdmin.savedProducts !== "undefined") {
+            selectedProducts = rdShopAdmin.savedProducts;
+            renderSelected();
+        } else {
+            renderSelected();
+        }
+
+        // ── Live product search
+        $("#rd-product-search").on("input", function(){
+            var q = $.trim($(this).val());
+            clearTimeout(searchTimer);
+            if (q.length < 2) {
+                $("#rd-search-results").hide().empty();
+                return;
+            }
+            searchTimer = setTimeout(function(){
+                var $res = $("#rd-search-results");
+                $res.show().html(\'<div class="rd-search-msg">\' + rdShopAdmin.i18n.searching + \'</div>\');
+                $.ajax({
+                    url: rdShopAdmin.ajaxUrl,
+                    method: "GET",
+                    data: { action: "rd_search_products", nonce: rdShopAdmin.nonce, q: q },
+                    success: function(resp) {
+                        $res.empty();
+                        if (!resp.success || !resp.data.length) {
+                            $res.html(\'<div class="rd-search-msg">\' + rdShopAdmin.i18n.noResults + \'</div>\');
+                            return;
+                        }
+                        $.each(resp.data, function(i, p){
+                            var img = p.thumb
+                                ? \'<img src="\' + p.thumb + \'" alt="\' + $("<div>").text(p.name).html() + \'">\' 
+                                : \'<img src="" alt="" style="background:#e8e0f0;width:40px;height:40px;border-radius:6px;">\';
+                            var row = $(
+                                \'<div class="rd-search-item" data-id="\' + p.id + \'">\' +
+                                img +
+                                \'<div><div class="rd-si-name">\' + $("<div>").text(p.name).html() + \'</div><div class="rd-si-id">ID: \' + p.id + \'</div></div>\' +
+                                \'</div>\'
+                            );
+                            row.on("click", function(){
+                                addProduct(p);
+                            });
+                            $res.append(row);
+                        });
+                    },
+                    error: function() {
+                        $res.html(\'<div class="rd-search-msg">Request failed. Please try again.</div>\');
+                    }
+                });
+            }, 300);
+        });
+
+        // Close dropdown when clicking outside
+        $(document).on("click", function(e){
+            if (!$(e.target).closest("#rd-search-results, #rd-product-search").length) {
+                $("#rd-search-results").hide();
+            }
+        });
+
+        // Remove button
+        $(document).on("click", ".rd-remove-btn", function(){
+            var id = parseInt($(this).data("id"), 10);
+            selectedProducts = selectedProducts.filter(function(p){ return p.id !== id; });
+            renderSelected();
+        });
+
+        // Save button: update label only — do NOT disable, as that prevents form submission
+        $("#rd-save-btn").closest("form").on("submit", function(){
+            $("#rd-save-btn").text("Saving\u2026");
+        });
+
+        // Show success notice if ?rd_saved=1
+        if (window.location.search.indexOf("rd_saved=1") !== -1) {
+            $(".rd-admin-notice").show();
+            setTimeout(function(){ $(".rd-admin-notice").fadeOut(); }, 4000);
+        }
+    });
+}(jQuery));
+    ';
+}
+
+/** Render the admin config page HTML */
+function rd_shop_admin_page(): void {
+    if ( ! current_user_can( 'manage_options' ) ) {
+        wp_die( esc_html__( 'You do not have permission to access this page.', 'rookidroid-shop' ) );
+    }
+
+    // Load currently saved products
+    $saved_ids = array_filter( array_map( 'absint', explode( ',', get_option( 'rd_shop_featured_product_ids', '' ) ) ) );
+    $saved_products = [];
+    foreach ( $saved_ids as $pid ) {
+        $p = wc_get_product( $pid );
+        if ( $p ) {
+            $thumb_id  = $p->get_image_id();
+            $thumb_url = $thumb_id ? wp_get_attachment_image_url( $thumb_id, [ 48, 48 ] ) : '';
+            $saved_products[] = [
+                'id'    => $p->get_id(),
+                'name'  => $p->get_name(),
+                'thumb' => $thumb_url ?: '',
+            ];
+        }
+    }
+
+    // Note: saved products are passed via wp_localize_script() in rd_shop_admin_enqueue(),
+    // not here — the page-render callback runs after wp_head() has already output scripts.
+    $count = count( $saved_products );
+    ?>
+    <div id="rd-featured-wrap">
+        <h1 class="rd-admin-title">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#9c27b0" stroke-width="2" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <?php esc_html_e( 'RookiDroid Featured Products', 'rookidroid-shop' ); ?>
+            <span class="rd-admin-badge">v<?php echo esc_html( RD_SHOP_VERSION ); ?></span>
+        </h1>
+        <p style="color:#555770;margin-bottom:24px;"><?php esc_html_e( 'Select the products that will be displayed by the [rookidroid_featured_products] shortcode.', 'rookidroid-shop' ); ?></p>
+
+        <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+            <?php wp_nonce_field( 'rd_shop_save_featured', 'rd_shop_nonce' ); ?>
+            <input type="hidden" name="action" value="rd_shop_save_featured">
+            <input type="hidden" name="rd_featured_ids" id="rd-hidden-ids" value="<?php echo esc_attr( implode( ',', array_column( $saved_products, 'id' ) ) ); ?>">
+
+            <!-- Search card -->
+            <div class="rd-admin-card">
+                <h2>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <?php esc_html_e( 'Search &amp; Add Products', 'rookidroid-shop' ); ?>
+                </h2>
+                <div class="rd-search-row">
+                    <input
+                        type="text"
+                        id="rd-product-search"
+                        autocomplete="off"
+                        placeholder="<?php esc_attr_e( 'Type a product name…', 'rookidroid-shop' ); ?>"
+                        aria-label="<?php esc_attr_e( 'Search products', 'rookidroid-shop' ); ?>"
+                    >
+                </div>
+                <div id="rd-search-results" role="listbox" aria-label="<?php esc_attr_e( 'Search results', 'rookidroid-shop' ); ?>"></div>
+            </div>
+
+            <!-- Selected products card -->
+            <div class="rd-admin-card">
+                <h2>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                    <?php esc_html_e( 'Selected Products', 'rookidroid-shop' ); ?>
+                    <span class="rd-count-badge" id="rd-count-badge"><?php echo esc_html( (string) $count ); ?></span>
+                </h2>
+                <div id="rd-selected-list">
+                    <?php if ( empty( $saved_products ) ) : ?>
+                        <div class="rd-empty-state">
+                            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <br><?php esc_html_e( 'No products selected yet. Use the search above to add some.', 'rookidroid-shop' ); ?>
+                        </div>
+                    <?php else : ?>
+                        <?php foreach ( $saved_products as $p ) : ?>
+                            <div class="rd-selected-item" data-id="<?php echo esc_attr( (string) $p['id'] ); ?>">
+                                <span class="rd-drag-handle" title="<?php esc_attr_e( 'Drag to reorder', 'rookidroid-shop' ); ?>">⠿</span>
+                                <?php if ( $p['thumb'] ) : ?>
+                                    <img src="<?php echo esc_url( $p['thumb'] ); ?>" alt="<?php echo esc_attr( $p['name'] ); ?>">
+                                <?php else : ?>
+                                    <img src="" alt="" style="background:#e8e0f0;">
+                                <?php endif; ?>
+                                <div class="rd-selected-info">
+                                    <div class="rd-si-name"><?php echo esc_html( $p['name'] ); ?></div>
+                                    <div class="rd-si-id">ID: <?php echo esc_html( (string) $p['id'] ); ?></div>
+                                </div>
+                                <button type="button" class="rd-remove-btn" data-id="<?php echo esc_attr( (string) $p['id'] ); ?>">✕ <?php esc_html_e( 'Remove', 'rookidroid-shop' ); ?></button>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Save row -->
+            <div class="rd-admin-card">
+                <div class="rd-save-row">
+                    <button type="submit" id="rd-save-btn"><?php esc_html_e( 'Save Featured Products', 'rookidroid-shop' ); ?></button>
+                    <span class="rd-admin-notice">✓ <?php esc_html_e( 'Changes saved successfully!', 'rookidroid-shop' ); ?></span>
+                </div>
+            </div>
+
+            <!-- Shortcode reference card -->
+            <div class="rd-admin-card rd-shortcode-hint">
+                <h2>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                    <?php esc_html_e( 'Shortcode Usage', 'rookidroid-shop' ); ?>
+                </h2>
+                <p><?php esc_html_e( 'Use this shortcode on any page or post to display your featured products:', 'rookidroid-shop' ); ?></p>
+                <p><code>[rookidroid_featured_products]</code></p>
+                <p><?php esc_html_e( 'With options:', 'rookidroid-shop' ); ?></p>
+                <p><code>[rookidroid_featured_products columns="3" title="Featured Products" subtitle="Hand-picked favourites" tag="★ Featured" view_all="/shop/"]</code></p>
+                <p style="margin-top:10px;font-size:.85rem;color:#8e8ea0;">
+                    <?php esc_html_e( 'Supports the same attributes as [rookidroid_products]: columns, limit, tag, title, subtitle, view_all, view_all_label.', 'rookidroid-shop' ); ?>
+                </p>
+            </div>
+        </form>
+    </div>
+    <?php
+}
+
+/** Handle POST save for featured products */
+function rd_shop_admin_save(): void {
+    if ( ! current_user_can( 'manage_options' ) ) {
+        wp_die( esc_html__( 'Unauthorized.', 'rookidroid-shop' ), 403 );
+    }
+
+    check_admin_referer( 'rd_shop_save_featured', 'rd_shop_nonce' );
+
+    $raw = sanitize_text_field( wp_unslash( $_POST['rd_featured_ids'] ?? '' ) );
+    $ids = array_filter( array_map( 'absint', explode( ',', $raw ) ) );
+
+    update_option( 'rd_shop_featured_product_ids', implode( ',', $ids ) );
+
+    wp_safe_redirect( add_query_arg( [
+        'page'     => 'rd-shop-featured',
+        'rd_saved' => '1',
+    ], admin_url( 'admin.php' ) ) );
+    exit;
+}
+
+/** AJAX: search WooCommerce products by keyword (admin-only) */
+function rd_shop_ajax_search_products(): void {
+    check_ajax_referer( 'rd_search_products', 'nonce' );
+
+    if ( ! current_user_can( 'manage_options' ) ) {
+        wp_send_json_error( [], 403 );
+    }
+
+    $q = sanitize_text_field( wp_unslash( $_GET['q'] ?? '' ) );
+
+    if ( strlen( $q ) < 2 ) {
+        wp_send_json_success( [] );
+    }
+
+    $products = wc_get_products( [
+        'status'  => 'publish',
+        'limit'   => 20,
+        'orderby' => 'title',
+        'order'   => 'ASC',
+        's'       => $q,
+    ] );
+
+    $results = [];
+    foreach ( $products as $product ) {
+        $thumb_id  = $product->get_image_id();
+        $thumb_url = $thumb_id ? wp_get_attachment_image_url( $thumb_id, [ 48, 48 ] ) : '';
+        $results[] = [
+            'id'    => $product->get_id(),
+            'name'  => $product->get_name(),
+            'thumb' => $thumb_url ?: '',
+        ];
+    }
+
+    wp_send_json_success( $results );
+}
+
+// ── [rookidroid_featured_products] shortcode ──────────────────────────────────
+/**
+ * Usage:
+ *   [rookidroid_featured_products]
+ *   [rookidroid_featured_products columns="4" title="Featured Products" tag="★ Featured"
+ *       view_all="/shop/" show_all="true" all_label="All"]
+ *
+ *   Override auto-detected categories:
+ *   [rookidroid_featured_products categories="3d-model,electronics" labels="3D Models,Electronics"]
+ *
+ * Automatically uses the product IDs saved on the config page.
+ * Renders the same tab-filter UI as [rookidroid_product_tabs], but only shows
+ * products that are in the saved featured list.
+ *
+ * Attributes:
+ *   categories      string   Optional comma-separated category slugs for tabs.
+ *                            If omitted, categories are auto-detected from the saved products.
+ *   labels          string   Optional comma-separated display labels matching categories.
+ *   columns         int      Grid columns per tab (default: 4)
+ *   limit           int      Max products per tab, -1 for all (default: -1)
+ *   show_all        bool     Show an "All" tab first (default: true)
+ *   all_label       string   Label for the "All" tab (default: "All")
+ *   tag             string   Small label above section title
+ *   title           string   Section heading
+ *   subtitle        string   Section subheading
+ *   view_all        string   URL for "View All" button
+ *   view_all_label  string   Button label (default: "View All Products")
+ */
+function rd_shop_featured_products_shortcode( array $atts ): string {
+    $saved_ids_raw = get_option( 'rd_shop_featured_product_ids', '' );
+    $saved_ids     = array_values( array_filter( array_map( 'absint', explode( ',', $saved_ids_raw ) ) ) );
+
+    if ( empty( $saved_ids ) ) {
+        return '<p class="rd-no-products">' . esc_html__( 'No featured products have been configured yet.', 'rookidroid-shop' ) . '</p>';
+    }
+
+    $atts = shortcode_atts( [
+        'categories'     => '',
+        'labels'         => '',
+        'columns'        => 4,
+        'limit'          => -1,
+        'show_all'       => true,
+        'all_label'      => __( 'All', 'rookidroid-shop' ),
+        'tag'            => '',
+        'title'          => '',
+        'subtitle'       => '',
+        'view_all'       => '',
+        'view_all_label' => __( 'View All Products', 'rookidroid-shop' ),
+    ], $atts, 'rookidroid_featured_products' );
+
+    // ── Determine categories ───────────────────────────────────────────────────
+    if ( ! empty( $atts['categories'] ) ) {
+        // Explicit categories provided
+        $cat_slugs  = array_values( array_filter( array_map( 'sanitize_title', explode( ',', $atts['categories'] ) ) ) );
+        $cat_labels = array_map( 'sanitize_text_field', explode( ',', $atts['labels'] ) );
+    } else {
+        // Auto-detect categories from the saved featured products
+        $cat_slugs  = [];
+        $cat_labels = [];
+        $seen_slugs = [];
+
+        foreach ( $saved_ids as $pid ) {
+            $terms = get_the_terms( $pid, 'product_cat' );
+            if ( ! $terms || is_wp_error( $terms ) ) {
+                continue;
+            }
+            foreach ( $terms as $term ) {
+                if ( ! isset( $seen_slugs[ $term->slug ] ) ) {
+                    $seen_slugs[ $term->slug ] = true;
+                    $cat_slugs[]  = $term->slug;
+                    $cat_labels[] = $term->name;
+                }
+            }
+        }
+    }
+
+    // ── Build tabs ─────────────────────────────────────────────────────────────
+    $tabs = [];
+    if ( filter_var( $atts['show_all'], FILTER_VALIDATE_BOOLEAN ) ) {
+        $tabs[] = [ 'slug' => '__all__', 'label' => sanitize_text_field( $atts['all_label'] ) ];
+    }
+    foreach ( $cat_slugs as $i => $slug ) {
+        $tabs[] = [
+            'slug'  => $slug,
+            'label' => $cat_labels[ $i ] ?? ucfirst( str_replace( '-', ' ', $slug ) ),
+        ];
+    }
+
+    // If no tabs could be determined, fall back to a plain grid
+    if ( empty( $tabs ) ) {
+        $fallback_atts            = $atts;
+        $fallback_atts['ids']     = implode( ',', $saved_ids );
+        $fallback_atts['on_sale'] = false;
+        $fallback_atts['orderby'] = 'post__in';
+        return rd_shop_products_shortcode( $fallback_atts );
+    }
+
+    $cols   = max( 1, min( 6, (int) $atts['columns'] ) );
+    $tab_id = 'rd-tabs-' . wp_unique_id();
+
+    // ── Tabs bar ───────────────────────────────────────────────────────────────
+    $tabs_bar = '<div class="rd-tabs" role="tablist">';
+    foreach ( $tabs as $idx => $tab ) {
+        $is_active = $idx === 0;
+        $tabs_bar .= sprintf(
+            '<button class="rd-tab-btn%s" role="tab" data-tab="%s" data-tabs-group="%s"
+                aria-selected="%s" aria-controls="%s-panel-%s">%s</button>',
+            $is_active ? ' rd-tab-btn--active' : '',
+            esc_attr( $tab['slug'] ),
+            esc_attr( $tab_id ),
+            $is_active ? 'true' : 'false',
+            esc_attr( $tab_id ),
+            esc_attr( $tab['slug'] ),
+            esc_html( $tab['label'] )
+        );
+    }
+    $tabs_bar .= '</div>';
+
+    // ── Panels ─────────────────────────────────────────────────────────────────
+    $panels_html = '';
+    foreach ( $tabs as $idx => $tab ) {
+        $is_all = $tab['slug'] === '__all__';
+
+        // Build a query restricted to saved IDs, optionally filtered by category
+        $query_args = [
+            'post_type'      => 'product',
+            'post_status'    => 'publish',
+            'posts_per_page' => (int) $atts['limit'] === -1 ? -1 : (int) $atts['limit'],
+            'post__in'       => $saved_ids,   // always restricted to featured set
+            'orderby'        => 'post__in',   // preserve admin-configured order
+            'tax_query'      => [ 'relation' => 'AND' ], // phpcs:ignore WordPress.DB.SlowDBQuery
+        ];
+
+        // Exclude hidden products
+        $query_args['tax_query'][] = [
+            'taxonomy' => 'product_visibility',
+            'field'    => 'name',
+            'terms'    => [ 'exclude-from-catalog' ],
+            'operator' => 'NOT IN',
+        ];
+
+        // For non-All tabs, add a category filter
+        if ( ! $is_all ) {
+            $query_args['tax_query'][] = [
+                'taxonomy' => 'product_cat',
+                'field'    => 'slug',
+                'terms'    => [ $tab['slug'] ],
+            ];
+        }
+
+        $query = new WP_Query( $query_args );
+        $cards = '';
+        foreach ( $query->posts as $post ) {
+            $product = wc_get_product( $post->ID );
+            if ( $product ) {
+                $cards .= rd_shop_render_card( $product );
+            }
+        }
+        wp_reset_postdata();
+
+        if ( ! $cards ) {
+            $cards = '<p class="rd-no-products">' . esc_html__( 'No products found.', 'rookidroid-shop' ) . '</p>';
+        }
+
+        $panels_html .= sprintf(
+            '<div id="%s-panel-%s" class="rd-tab-panel" role="tabpanel"%s>
+                <div class="rd-product-grid rd-cols-%d">%s</div>
+            </div>',
+            esc_attr( $tab_id ),
+            esc_attr( $tab['slug'] ),
+            $idx === 0 ? '' : ' hidden',
+            $cols,
+            $cards
+        );
+    }
+
+    return '<div class="rd-products-wrap" id="' . esc_attr( $tab_id ) . '">'
+         . rd_shop_section_header( $atts['tag'], $atts['title'], $atts['subtitle'] )
+         . $tabs_bar
+         . $panels_html
+         . rd_shop_view_all( $atts['view_all'], $atts['view_all_label'] )
+         . '</div>';
+}
+
