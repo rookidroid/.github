@@ -1,0 +1,99 @@
+/* ============================================================
+   Product Custom Text for WooCommerce – Front-end styles
+   ============================================================ */
+
+/* ── Layout fix ──────────────────────────────────────────────────────────────
+   The Neve theme applies a high-specificity flex rule to form.cart
+   (display:flex, flex-wrap:nowrap, align-items:center) which squeezes our
+   field into the same row as the quantity input and Add to Cart button.
+   We use !important on the key flex properties so our wrapper always breaks
+   onto its own full-width row above the qty + button.
+   ── */
+form.cart {
+    flex-wrap: wrap !important;
+    align-items: flex-start !important;
+}
+
+form.cart .pct-field-wrapper {
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+    margin-bottom: 1.25em;
+    margin-top: 0;
+}
+
+/* Wrapper card */
+.pct-field-wrapper {
+    padding: 1.1em 1.25em;
+    background: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+/* Label */
+.pct-label {
+    display: block;
+    margin-bottom: 0.5em;
+    font-weight: 600;
+    font-size: 0.95em;
+    color: #333;
+}
+
+.pct-required {
+    color: #e00;
+    margin-left: 3px;
+}
+
+/* Shared input styles */
+.pct-input {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.65em 0.85em;
+    font-size: 0.95em;
+    font-family: inherit;
+    color: #333;
+    background: #fff;
+    border: 1.5px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    resize: vertical;
+}
+
+.pct-input:focus {
+    border-color: #96588a; /* WooCommerce purple accent */
+    box-shadow: 0 0 0 3px rgba(150, 88, 138, 0.15);
+}
+
+/* Error state (client-side validation) */
+.pct-input.pct-error {
+    border-color: #cc0000;
+    box-shadow: 0 0 0 3px rgba(204, 0, 0, 0.12);
+}
+
+/* Textarea specific */
+.pct-textarea {
+    min-height: 90px;
+    line-height: 1.55;
+}
+
+/* Character counter */
+.pct-counter {
+    margin-top: 0.4em;
+    font-size: 0.8em;
+    color: #888;
+    text-align: right;
+}
+
+.pct-counter.pct-limit-near {
+    color: #e6a817;
+}
+
+.pct-counter.pct-limit-reached {
+    color: #cc0000;
+    font-weight: 600;
+}
