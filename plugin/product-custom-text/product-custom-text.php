@@ -318,13 +318,14 @@ function pct_add_cart_item_data( array $cart_item_data, int $product_id ): array
     $custom_text = mb_substr( $custom_text, 0, $max );
 
     if ( $required && $custom_text === '' ) {
-        // Return cart item but mark as invalid – wc_add_notice is cleaner
         wc_add_notice(
             __( 'Please fill in the required personalization text before adding to cart.', 'product-custom-text' ),
             'error'
         );
-        // Returning an empty array prevents the add-to-cart
-        return [];
+        // Return the original data intact — the error notice blocks add-to-cart.
+        // Returning [] would strip WooCommerce's own cart item data and cause
+        // downstream null-key deprecation notices (PHP 8.1+).
+        return $cart_item_data;
     }
 
     if ( $custom_text !== '' ) {
@@ -368,11 +369,9 @@ function pct_save_to_order_item(
 }
 
 // ── Display in admin order screen & emails ────────────────────────────────────
-function pct_display_order_item_meta(
-    int              $item_id,
-    \WC_Order_Item   $item,
-    \WC_Product|bool $product
-): void {
-    // WooCommerce already renders order item meta automatically from the saved
-    // meta data. This hook can be used for additional custom output if needed.
+function pct_display_order_item_meta( $item_id, $item, $order_or_product ): void {
+    // WooCommerce fires this hook from several contexts (email, order details,
+    // admin meta-box) with different types for $item_id and the third argument.
+    // The meta is already rendered automatically by WooCommerce from the saved
+    // order item meta data; no additional output is needed here.
 }
