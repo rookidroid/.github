@@ -1,4 +1,4 @@
-﻿<!-- =====================================================================
+<!-- =====================================================================
   Hexapod Evolution Timeline — RookiDroid
   Paste into a WordPress "Custom HTML" block.
   All classes prefixed "hxt-" to avoid theme conflicts.
@@ -428,61 +428,7 @@
     <p>Every design flaw, every failed prototype, and every hard-won fix is part of the story. That's the whole point.</p>
   </div>
 
-    <!-- Instructions -->
-  <div class="hxt-instructions">
-  <h2>&#128218;&nbsp; Build Your Own</h2>
-  <div class="hxt-instr-grid">
 
-    <!-- 3D Printing & Assembly -->
-    <div class="hxt-instr-card">
-      <div class="hxt-instr-card-header">
-        <span class="hxt-instr-icon">🖨️</span>
-        <span>3D Printing &amp; Assembly</span>
-      </div>
-      <div class="hxt-instr-btns">
-        <a class="hxt-instr-btn hxt-instr-btn-guide" href="https://rookidroid.com/hexapod-mochi-3d-printing-and-assembly/" target="_blank" rel="noopener">📖 Guide</a>
-        <a class="hxt-instr-btn hxt-instr-btn-shop" href="https://rookidroid.com/product/hexapod-mochi/" target="_blank" rel="noopener">⬇️ Free Download</a>
-      </div>
-    </div>
-
-    <!-- Electronics -->
-    <div class="hxt-instr-card">
-      <div class="hxt-instr-card-header">
-        <span class="hxt-instr-icon">⚡</span>
-        <span>Electronics (ESP32)</span>
-      </div>
-      <div class="hxt-instr-btns">
-        <a class="hxt-instr-btn hxt-instr-btn-guide" href="https://rookidroid.com/hexapod-mochi-electronics-esp32/" target="_blank" rel="noopener">📖 Guide</a>
-        <a class="hxt-instr-btn hxt-instr-btn-shop" href="https://rookidroid.com/product/hexapod-controller-board-esp32/" target="_blank" rel="noopener">🛒 Shop</a>
-      </div>
-    </div>
-
-    <!-- Software -->
-    <div class="hxt-instr-card">
-      <div class="hxt-instr-card-header">
-        <span class="hxt-instr-icon">💻</span>
-        <span>Software</span>
-      </div>
-      <div class="hxt-instr-btns">
-        <a class="hxt-instr-btn hxt-instr-btn-guide" href="https://rookidroid.com/hexapod-mochi-software-esp32/" target="_blank" rel="noopener">📖 Guide</a>
-        <a class="hxt-instr-btn hxt-instr-btn-shop" href="https://github.com/rookidroid/hexapod/tree/mochi/software/hexapod_esp32" target="_blank" rel="noopener">⬇️ Free Download</a>
-      </div>
-    </div>
-
-    <!-- Calibration (instruction only) -->
-    <div class="hxt-instr-card">
-      <div class="hxt-instr-card-header">
-        <span class="hxt-instr-icon">🎯</span>
-        <span>Calibration</span>
-      </div>
-      <div class="hxt-instr-btns">
-        <a class="hxt-instr-btn hxt-instr-btn-guide" href="https://rookidroid.com/hexapod-mochi-calibrationesp32/" target="_blank" rel="noopener">📖 Guide</a>
-        <span style="flex:1;"></span>
-      </div>
-    </div>
-
-  </div>
-</div>
 
   <!-- Stats bar -->
   <div class="hxt-stats">
@@ -554,7 +500,7 @@
     </div>
 
     <!-- V3 -->
-    <div class="hxt-entry hxt-left hxt-v3">
+    <div id="v3" class="hxt-entry hxt-left hxt-v3">
       <div class="hxt-card">
         <img class="hxt-card-img"
           src="https://zpeng.me/wp-content/uploads/2026/06/hexapod_mochi.jpg"
@@ -574,7 +520,62 @@
             <span class="hxt-spec">🔄 OTA updates</span>
             <span class="hxt-spec">⭕ Circular chassis</span>
           </div>
-          <a class="hxt-btn" href="https://rookidroid.com/product/hexapod-mochi/" target="_blank" rel="noopener">View on RookiDroid ↗</a>
+
+          <!-- Instructions -->
+          <div class="hxt-instructions" style="margin-top:24px;margin-bottom:0;">
+            <h2>&#128218;&nbsp; Build Your Own</h2>
+            <div class="hxt-instr-grid" style="grid-template-columns:1fr;">
+
+              <!-- 3D Printing & Assembly -->
+              <div class="hxt-instr-card">
+                <div class="hxt-instr-card-header">
+                  <span class="hxt-instr-icon">🖨️</span>
+                  <span>3D Printing &amp; Assembly</span>
+                </div>
+                <div class="hxt-instr-btns">
+                  <a class="hxt-instr-btn hxt-instr-btn-guide" href="https://rookidroid.com/hexapod-mochi-3d-printing-and-assembly/" target="_blank" rel="noopener">📖 Guide</a>
+                  <a class="hxt-instr-btn hxt-instr-btn-shop" href="https://rookidroid.com/product/hexapod-mochi/" target="_blank" rel="noopener">⬇️ Free Download</a>
+                </div>
+              </div>
+
+              <!-- Electronics -->
+              <div class="hxt-instr-card">
+                <div class="hxt-instr-card-header">
+                  <span class="hxt-instr-icon">⚡</span>
+                  <span>Electronics (ESP32)</span>
+                </div>
+                <div class="hxt-instr-btns">
+                  <a class="hxt-instr-btn hxt-instr-btn-guide" href="https://rookidroid.com/hexapod-mochi-electronics-esp32/" target="_blank" rel="noopener">📖 Guide</a>
+                  <a class="hxt-instr-btn hxt-instr-btn-shop" href="https://rookidroid.com/product/hexapod-controller-board-esp32/" target="_blank" rel="noopener">🛒 Shop</a>
+                </div>
+              </div>
+
+              <!-- Software -->
+              <div class="hxt-instr-card">
+                <div class="hxt-instr-card-header">
+                  <span class="hxt-instr-icon">💻</span>
+                  <span>Software</span>
+                </div>
+                <div class="hxt-instr-btns">
+                  <a class="hxt-instr-btn hxt-instr-btn-guide" href="https://rookidroid.com/hexapod-mochi-software-esp32/" target="_blank" rel="noopener">📖 Guide</a>
+                  <a class="hxt-instr-btn hxt-instr-btn-shop" href="https://github.com/rookidroid/hexapod/tree/mochi/software/hexapod_esp32" target="_blank" rel="noopener">⬇️ Free Download</a>
+                </div>
+              </div>
+
+              <!-- Calibration -->
+              <div class="hxt-instr-card">
+                <div class="hxt-instr-card-header">
+                  <span class="hxt-instr-icon">🎯</span>
+                  <span>Calibration</span>
+                </div>
+                <div class="hxt-instr-btns">
+                  <a class="hxt-instr-btn hxt-instr-btn-guide" href="https://rookidroid.com/hexapod-mochi-calibrationesp32/" target="_blank" rel="noopener">📖 Guide</a>
+                  <span style="flex:1;"></span>
+                </div>
+              </div>
+
+            </div>
+          </div>
         </div>
       </div>
       <div class="hxt-node"><div class="hxt-bubble">v3</div></div>
