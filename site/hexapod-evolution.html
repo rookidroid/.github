@@ -24,6 +24,7 @@
   --hxt-v1:        #9c27b0;
   --hxt-v2:        #e64f2a;
   --hxt-v3:        #021437;
+  --hxt-v4:        #006064;
   --hxt-radius:    16px;
   --hxt-spine:     3px;
   font-family: Inter, system-ui, sans-serif;
@@ -63,42 +64,39 @@
   position: relative;
   padding: 0 0 16px;
 }
-.hxt-timeline::before {
-  content: '';
-  position: absolute;
-  top: 24px;
-  bottom: 24px;
-  left: calc(50% - var(--hxt-spine) / 2);
-  width: var(--hxt-spine);
-  background: linear-gradient(to bottom, var(--hxt-v1), var(--hxt-v2), var(--hxt-v3));
-  border-radius: 99px;
-}
+/* SVG spine is injected via JS below; no ::before needed */
 
 /* ── Entry ─────────────────────────────────────────────────────────── */
 .hxt-entry {
-  display: grid;
-  grid-template-columns: 1fr 64px 1fr;
-  margin-bottom: 56px;
   position: relative;
+  margin-bottom: 64px;
 }
 .hxt-entry:last-child { margin-bottom: 0; }
 
-.hxt-entry.hxt-left  .hxt-card   { grid-column: 1; grid-row: 1; margin-right: 24px; }
-.hxt-entry.hxt-left  .hxt-node   { grid-column: 2; grid-row: 1; }
-.hxt-entry.hxt-left  .hxt-spacer { grid-column: 3; grid-row: 1; }
+/* Hide spacers — not needed in full-width layout */
+.hxt-entry .hxt-spacer { display: none; }
 
-.hxt-entry.hxt-right .hxt-spacer { grid-column: 1; grid-row: 1; }
-.hxt-entry.hxt-right .hxt-node   { grid-column: 2; grid-row: 1; }
-.hxt-entry.hxt-right .hxt-card   { grid-column: 3; grid-row: 1; margin-left: 24px; }
+/* Cards take nearly the full row width */
+/* Left entry: dot is on the right, so card leaves right margin for it */
+.hxt-entry.hxt-left  .hxt-card { margin-right: 64px; margin-left: 0; }
+/* Right entry: dot is on the left, so card leaves left margin for it */
+.hxt-entry.hxt-right .hxt-card { margin-left: 64px; margin-right: 0; }
 
 /* ── Node ──────────────────────────────────────────────────────────── */
+/* Dots are absolutely pinned to the far edge of their row */
 .hxt-node {
+  position: absolute;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 24px;
+  width: 56px;
+  top: 24px;
   z-index: 1;
 }
+/* Left-entry dot: pinned to far RIGHT edge */
+.hxt-entry.hxt-left  .hxt-node { right: 0; left: auto; }
+/* Right-entry dot: pinned to far LEFT edge */
+.hxt-entry.hxt-right .hxt-node { left: 0; right: auto; }
 .hxt-bubble {
   width: 52px;
   height: 52px;
@@ -115,6 +113,7 @@
 .hxt-entry.hxt-v1 .hxt-bubble { background: var(--hxt-v1); box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--hxt-v1); }
 .hxt-entry.hxt-v2 .hxt-bubble { background: var(--hxt-v2); box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--hxt-v2); }
 .hxt-entry.hxt-v3 .hxt-bubble { background: var(--hxt-v3); box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--hxt-v3); }
+.hxt-entry.hxt-v4 .hxt-bubble { background: var(--hxt-v4); box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--hxt-v4); }
 
 /* ── Card ──────────────────────────────────────────────────────────── */
 .hxt-card {
@@ -154,6 +153,7 @@
 .hxt-entry.hxt-v1 .hxt-badge { background: rgba(156,39,176,.1); color: var(--hxt-v1); border: 1px solid rgba(156,39,176,.3); }
 .hxt-entry.hxt-v2 .hxt-badge { background: rgba(230,79,42,.1);  color: var(--hxt-v2); border: 1px solid rgba(230,79,42,.3); }
 .hxt-entry.hxt-v3 .hxt-badge { background: rgba(2,20,55,.08);   color: var(--hxt-v3); border: 1px solid rgba(2,20,55,.2); }
+.hxt-entry.hxt-v4 .hxt-badge { background: rgba(0,96,100,.08);  color: var(--hxt-v4); border: 1px solid rgba(0,96,100,.25); }
 
 .hxt-card-body h3 {
   font-family: 'Space Grotesk', Inter, sans-serif;
@@ -214,6 +214,7 @@
 .hxt-entry.hxt-v1 .hxt-btn { background: var(--hxt-purple); color: #fff !important; }
 .hxt-entry.hxt-v2 .hxt-btn { background: var(--hxt-v2);     color: #fff !important; }
 .hxt-entry.hxt-v3 .hxt-btn { background: var(--hxt-dark);   color: #fff !important; }
+.hxt-entry.hxt-v4 .hxt-btn { background: var(--hxt-v4);     color: #fff !important; }
 
 /* ── Story section ────────────────────────────────────────────────── */
 .hxt-story {
@@ -400,15 +401,63 @@
 .hxt-entry.hxt-v1 .hxt-card { border-top: 3px solid var(--hxt-v1); }
 .hxt-entry.hxt-v2 .hxt-card { border-top: 3px solid var(--hxt-v2); }
 .hxt-entry.hxt-v3 .hxt-card { border-top: 3px solid var(--hxt-v3); }
+.hxt-entry.hxt-v4 .hxt-card { border-top: 3px solid var(--hxt-v4); border-style: dashed; }
+
+/* ── V4 coming-soon placeholder ────────────────────────────────────── */
+.hxt-soon-img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #004D40 0%, #006064 60%, #00838F 100%);
+  color: #fff;
+}
+.hxt-soon-icon { font-size: 3.5rem; line-height: 1; }
+.hxt-soon-label {
+  font-family: 'Space Grotesk', Inter, sans-serif;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  opacity: .75;
+}
+.hxt-soon-badge {
+  display: inline-block;
+  background: rgba(255,255,255,.15);
+  border: 1px solid rgba(255,255,255,.3);
+  border-radius: 50px;
+  padding: 4px 14px;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #fff;
+  animation: hxt-pulse 2s ease-in-out infinite;
+}
+@keyframes hxt-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: .4; }
+}
 
 /* ── Responsive ────────────────────────────────────────────────────── */
 @media (max-width: 680px) {
-  .hxt-timeline::before { left: 26px; }
-  .hxt-entry { grid-template-columns: 64px 1fr; }
+  .hxt-spine-svg { display: none; }
+  .hxt-timeline::before {
+    content: '';
+    position: absolute;
+    top: 24px; bottom: 24px;
+    left: 26px;
+    width: var(--hxt-spine);
+    background: linear-gradient(to bottom, var(--hxt-v1), var(--hxt-v2), var(--hxt-v3));
+    border-radius: 99px;
+  }
   .hxt-entry.hxt-left  .hxt-card,
-  .hxt-entry.hxt-right .hxt-card  { grid-column: 2; grid-row: 1; margin-left: 0 !important; margin-right: 0 !important; }
+  .hxt-entry.hxt-right .hxt-card { margin-left: 56px !important; margin-right: 0 !important; }
   .hxt-entry.hxt-left  .hxt-node,
-  .hxt-entry.hxt-right .hxt-node  { grid-column: 1; grid-row: 1; }
+  .hxt-entry.hxt-right .hxt-node { position: absolute; left: 0 !important; right: auto !important; top: 24px; }
   .hxt-entry.hxt-left  .hxt-spacer,
   .hxt-entry.hxt-right .hxt-spacer { display: none; }
   .hxt-stats { grid-template-columns: 1fr; }
@@ -570,7 +619,7 @@
                 </div>
                 <div class="hxt-instr-btns">
                   <a class="hxt-instr-btn hxt-instr-btn-guide" href="https://rookidroid.com/hexapod-mochi-calibrationesp32/" target="_blank" rel="noopener">📖 Guide</a>
-                  <span style="flex:1;"></span>
+                  <span class="hxt-instr-btn" aria-hidden="true" style="visibility:hidden;"></span>
                 </div>
               </div>
 
@@ -580,6 +629,26 @@
       </div>
       <div class="hxt-node"><div class="hxt-bubble">v3</div></div>
       <div class="hxt-spacer"></div>
+    </div>
+
+    <!-- V4 -->
+    <div id="v4" class="hxt-entry hxt-right hxt-v4">
+      <div class="hxt-spacer"></div>
+      <div class="hxt-node"><div class="hxt-bubble">v4</div></div>
+      <div class="hxt-card">
+        <div class="hxt-soon-img">
+          <span class="hxt-soon-icon">🔧</span>
+          <span class="hxt-soon-label">In Development</span>
+          <span class="hxt-soon-badge">Coming Soon</span>
+        </div>
+        <div class="hxt-card-body">
+          <span class="hxt-badge">&#9679;&nbsp;Version 4 — Macaroon</span>
+          <h3>Hexapod Macaroon</h3>
+          <p class="hxt-subtitle">Something Bigger Is Coming</p>
+          <p>Version 4 is currently in development. Based on everything learned across three generations, Macaroon will push the limits further — smarter control, refined mechanics, and even more character.</p>
+          <p>Follow along on <a href="https://rookidroid.com" target="_blank" rel="noopener" style="color:var(--hxt-v4);font-weight:600;">RookiDroid</a> for updates as the build progresses.</p>
+        </div>
+      </div>
     </div>
 
   </div><!-- /.hxt-timeline -->
@@ -630,6 +699,119 @@
       <span>&#9989;&nbsp; Custom gait tools</span>
     </div>
   </div>
+
+
+
+<script>
+(function () {
+  function buildSpine() {
+    var timeline = document.querySelector('.hxt-timeline');
+    if (!timeline) return;
+
+    var old = timeline.querySelector('.hxt-spine-svg');
+    if (old) old.remove();
+
+    var tlRect  = timeline.getBoundingClientRect();
+    var entries = Array.from(timeline.querySelectorAll('.hxt-entry'));
+    if (entries.length < 2) return;
+
+    var R = 14; // corner radius
+
+    // Collect per-entry data
+    var info = entries.map(function (entry) {
+      var bubble = entry.querySelector('.hxt-bubble');
+      var bRect  = bubble.getBoundingClientRect();
+      var eRect  = entry.getBoundingClientRect();
+      return {
+        cx:     bRect.left + bRect.width  / 2 - tlRect.left, // bubble centre x
+        cy:     bRect.top  + bRect.height / 2 - tlRect.top,  // bubble centre y
+        bottom: eRect.bottom - tlRect.top,                    // card bottom y
+        isLeft: entry.classList.contains('hxt-left')
+      };
+    });
+
+    // Build path: right-angle trace with rounded corners
+    // For left-entry (dot at RIGHT): go DOWN → turn LEFT → go UP
+    // For right-entry (dot at LEFT): go DOWN → turn RIGHT → go UP
+    var d = 'M ' + info[0].cx + ' ' + info[0].cy;
+
+    for (var i = 0; i < info.length - 1; i++) {
+      var cur  = info[i];
+      var next = info[i + 1];
+      var hy   = cur.bottom + 8; // horizontal run: just below card bottom edge
+
+      if (cur.isLeft) {
+        // Dot at RIGHT  ──►  next dot at LEFT
+        // Down the right side
+        d += ' L ' + cur.cx + ' ' + (hy - R);
+        // Corner: ↓ then ← (clockwise, sweep=1)
+        d += ' A ' + R + ' ' + R + ' 0 0 1 ' + (cur.cx - R) + ' ' + hy;
+        // Horizontal run left
+        d += ' L ' + (next.cx + R) + ' ' + hy;
+        // Corner: ← then ↓ (counter-clockwise, sweep=0)
+        d += ' A ' + R + ' ' + R + ' 0 0 0 ' + next.cx + ' ' + (hy + R);
+      } else {
+        // Dot at LEFT  ──►  next dot at RIGHT
+        // Down the left side
+        d += ' L ' + cur.cx + ' ' + (hy - R);
+        // Corner: ↓ then → (counter-clockwise, sweep=0)
+        d += ' A ' + R + ' ' + R + ' 0 0 0 ' + (cur.cx + R) + ' ' + hy;
+        // Horizontal run right
+        d += ' L ' + (next.cx - R) + ' ' + hy;
+        // Corner: → then ↓ (clockwise, sweep=1)
+        d += ' A ' + R + ' ' + R + ' 0 0 1 ' + next.cx + ' ' + (hy + R);
+      }
+
+      // Up to next dot
+      d += ' L ' + next.cx + ' ' + next.cy;
+    }
+
+    var W = tlRect.width;
+    var H = tlRect.height;
+
+    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('class', 'hxt-spine-svg');
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    svg.setAttribute('width',  W);
+    svg.setAttribute('height', H);
+    svg.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none;overflow:visible;z-index:0;';
+
+    // Gradient
+    var defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+    var grad = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+    grad.setAttribute('id', 'hxt-spine-grad');
+    grad.setAttribute('x1', '0'); grad.setAttribute('y1', '0');
+    grad.setAttribute('x2', '0'); grad.setAttribute('y2', '1');
+    [['0%','#9c27b0'],['50%','#e64f2a'],['100%','#021437']].forEach(function(s){
+      var stop = document.createElementNS('http://www.w3.org/2000/svg','stop');
+      stop.setAttribute('offset', s[0]);
+      stop.setAttribute('stop-color', s[1]);
+      grad.appendChild(stop);
+    });
+    defs.appendChild(grad);
+    svg.appendChild(defs);
+
+    var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', d);
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke', 'url(#hxt-spine-grad)');
+    path.setAttribute('stroke-width', '3');
+    path.setAttribute('stroke-linecap', 'square');
+    svg.appendChild(path);
+
+    timeline.insertBefore(svg, timeline.firstChild);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', buildSpine);
+  } else {
+    buildSpine();
+  }
+  // Re-draw after images load (cards grow taller)
+  window.addEventListener('load', buildSpine);
+  window.addEventListener('resize', buildSpine);
+})();
+</script>
 
 
 </div><!-- /.hxt-wrap -->
