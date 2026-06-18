@@ -123,19 +123,28 @@
   overflow: hidden;
   box-shadow: 0 2px 12px rgba(0,0,0,.06);
   transition: box-shadow .25s, transform .25s;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
 }
+/* Right-entry cards: flip so image is on the outer (right) edge */
+.hxt-entry.hxt-right .hxt-card { flex-direction: row-reverse; }
 .hxt-card:hover {
   box-shadow: 0 8px 32px rgba(156,39,176,.15);
   transform: translateY(-4px);
 }
 .hxt-card-img {
-  width: 100%;
-  aspect-ratio: 4 / 3;
+  width: 38%;
+  max-width: 340px;
+  max-height: 420px;
+  flex-shrink: 0;
   object-fit: cover;
+  object-position: center top;
   display: block;
   background: var(--hxt-light-bg);
+  align-self: flex-start;
 }
-.hxt-card-body { padding: 20px 22px 22px; }
+.hxt-card-body { padding: 24px 26px; flex: 1; min-width: 0; }
 
 /* Badge */
 .hxt-badge {
@@ -327,6 +336,11 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
 }
+@media (max-width: 1024px) {
+  .hxt-instr-grid {
+    grid-template-columns: 1fr;
+  }
+}
 .hxt-instr-card {
   background: rgba(255,255,255,.06);
   border: 1px solid rgba(255,255,255,.1);
@@ -348,6 +362,7 @@
 }
 .hxt-instr-btns {
   display: flex;
+  flex-direction: column;
   gap: 8px;
 }
 .hxt-instr-btn {
@@ -398,15 +413,18 @@
 }
 
 /* ── Entry backgrounds ─────────────────────────────────────────────── */
-.hxt-entry.hxt-v1 .hxt-card { border-top: 3px solid var(--hxt-v1); }
-.hxt-entry.hxt-v2 .hxt-card { border-top: 3px solid var(--hxt-v2); }
-.hxt-entry.hxt-v3 .hxt-card { border-top: 3px solid var(--hxt-v3); }
-.hxt-entry.hxt-v4 .hxt-card { border-top: 3px solid var(--hxt-v4); border-style: dashed; }
+/* Border accent on the image side edge */
+.hxt-entry.hxt-v1 .hxt-card-img { border-left:  4px solid var(--hxt-v1); }
+.hxt-entry.hxt-v2 .hxt-card-img { border-right: 4px solid var(--hxt-v2); }
+.hxt-entry.hxt-v3 .hxt-card-img { border-left:  4px solid var(--hxt-v3); }
+.hxt-entry.hxt-v4 .hxt-card-img,
+.hxt-entry.hxt-v4 .hxt-soon-img { border-right: 4px dashed var(--hxt-v4); }
 
 /* ── V4 coming-soon placeholder ────────────────────────────────────── */
 .hxt-soon-img {
-  width: 100%;
-  aspect-ratio: 4 / 3;
+  width: 38%;
+  max-width: 340px;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -414,6 +432,7 @@
   gap: 10px;
   background: linear-gradient(135deg, #004D40 0%, #006064 60%, #00838F 100%);
   color: #fff;
+  min-height: 200px;
 }
 .hxt-soon-icon { font-size: 3.5rem; line-height: 1; }
 .hxt-soon-label {
@@ -444,6 +463,19 @@
 
 /* ── Responsive ────────────────────────────────────────────────────── */
 @media (max-width: 680px) {
+  /* Revert cards to vertical stacking on mobile */
+  .hxt-card,
+  .hxt-entry.hxt-right .hxt-card { flex-direction: column; }
+  .hxt-card-img {
+    width: 100%;
+    max-width: none;
+    aspect-ratio: 4 / 3;
+  }
+  .hxt-soon-img {
+    width: 100%;
+    max-width: none;
+    aspect-ratio: 4 / 3;
+  }
   .hxt-spine-svg { display: none; }
   .hxt-timeline::before {
     content: '';
