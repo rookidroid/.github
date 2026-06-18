@@ -23,59 +23,6 @@
       --font: 'Inter', sans-serif;
     }
 
-    body {
-      background: #f5f5f5;
-      font-family: var(--font);
-    }
-
-    footer {
-      background: var(--bg);
-      border-top: 3px solid var(--primary);
-    }
-
-    /* ── Newsletter band ── */
-    .nl {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 20px;
-      padding: 28px 56px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-    }
-    .nl-text h3 { font-size: 1rem; font-weight: 600; color: var(--text-hi); margin-bottom: 3px; }
-    .nl-text p  { font-size: 0.8rem; color: var(--text-mid); }
-    .nl-form { display: flex; gap: 8px; flex-wrap: wrap; }
-    .nl-form input {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text-hi);
-      font-family: var(--font);
-      font-size: 0.875rem;
-      padding: 9px 14px;
-      width: 230px;
-      outline: none;
-      transition: border-color .2s;
-    }
-    .nl-form input::placeholder { color: var(--text-lo); }
-    .nl-form input:focus { border-color: var(--primary); }
-    .nl-form button {
-      background: var(--primary);
-      border: none;
-      border-radius: 6px;
-      color: #fff;
-      font-family: var(--font);
-      font-weight: 600;
-      font-size: 0.875rem;
-      padding: 9px 20px;
-      cursor: pointer;
-      transition: background .2s;
-      white-space: nowrap;
-    }
-    .nl-form button:hover { background: var(--primary-h); }
-
     /* ── Main grid ── */
     .footer-grid {
       display: grid;
@@ -93,7 +40,7 @@
       text-decoration: none;
       margin-bottom: 14px;
     }
-    .brand-logo img { height: 34px; width: auto; filter: brightness(0) invert(1); }
+    .brand-logo img { height: 64px; width: auto;}
     .brand-logo-text { display: none; font-size: 1.2rem; font-weight: 700; color: var(--text-hi); }
     .brand-tagline {
       font-size: 0.85rem;
@@ -163,26 +110,25 @@
     .contact-item a:hover { color: var(--text-hi); }
 
     /* ── Bottom bar ── */
-    .footer-bottom {
+    .footer-copyright {
       display: flex; align-items: center; justify-content: space-between;
       flex-wrap: wrap; gap: 12px;
-      padding: 18px 56px;
-      background: #111111;
+      padding: 0px 0px;
     }
-    .footer-bottom p, .footer-bottom a { font-size: 0.78rem; color: var(--text-lo); }
-    .footer-bottom a { text-decoration: none; transition: color .2s; }
-    .footer-bottom a:hover { color: var(--text-mid); }
+    .footer-copyright p, .footer-copyright a { font-size: 0.78rem; color: var(--text-lo); }
+    .footer-copyright a { text-decoration: none; transition: color .2s; }
+    .footer-copyright a:hover { color: var(--text-mid); }
     .bottom-links { display: flex; gap: 20px; }
 
     /* ── Responsive ── */
     @media (max-width: 880px) {
       .footer-grid { grid-template-columns: 1fr 1fr; padding: 40px 28px 32px; }
       .nl { padding: 24px 28px; }
-      .footer-bottom { padding: 16px 28px; }
+      .footer-copyright { padding: 16px 28px; }
     }
     @media (max-width: 520px) {
       .footer-grid { grid-template-columns: 1fr; gap: 28px; }
-      .footer-bottom { flex-direction: column; align-items: flex-start; }
+      .footer-copyright { flex-direction: column; align-items: flex-start; }
     }
   </style>
 </head>
@@ -280,7 +226,7 @@
   </div>
 
   <!-- Bottom bar -->
-  <div class="footer-bottom">
+  <div class="footer-copyright">
     <p>© 2023–2026 rookidroid.com — All rights reserved</p>
     <div class="bottom-links">
       <a href="https://rookidroid.com/privacy-policy/">Privacy Policy</a>
