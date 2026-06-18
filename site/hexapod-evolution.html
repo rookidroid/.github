@@ -69,7 +69,7 @@
 /* ── Entry ─────────────────────────────────────────────────────────── */
 .hxt-entry {
   position: relative;
-  margin-bottom: 64px;
+  margin-bottom: 200px;
 }
 .hxt-entry:last-child { margin-bottom: 0; }
 
@@ -78,9 +78,9 @@
 
 /* Cards take nearly the full row width */
 /* Left entry: dot is on the right, so card leaves right margin for it */
-.hxt-entry.hxt-left  .hxt-card { margin-right: 64px; margin-left: 0; }
+.hxt-entry.hxt-left  .hxt-card { margin-right: 88px; margin-left: 0; }
 /* Right entry: dot is on the left, so card leaves left margin for it */
-.hxt-entry.hxt-right .hxt-card { margin-left: 64px; margin-right: 0; }
+.hxt-entry.hxt-right .hxt-card { margin-left: 88px; margin-right: 0; }
 
 /* ── Node ──────────────────────────────────────────────────────────── */
 /* Dots are absolutely pinned to the far edge of their row */
@@ -573,7 +573,7 @@
           <!-- Instructions -->
           <div class="hxt-instructions" style="margin-top:24px;margin-bottom:0;">
             <h2>&#128218;&nbsp; Build Your Own</h2>
-            <div class="hxt-instr-grid" style="grid-template-columns:1fr;">
+            <div class="hxt-instr-grid">
 
               <!-- 3D Printing & Assembly -->
               <div class="hxt-instr-card">
@@ -738,7 +738,7 @@
     for (var i = 0; i < info.length - 1; i++) {
       var cur  = info[i];
       var next = info[i + 1];
-      var hy   = cur.bottom + 8; // horizontal run: just below card bottom edge
+      var hy   = cur.bottom + 100; // horizontal run: below card bottom edge
 
       if (cur.isLeft) {
         // Dot at RIGHT  ──►  next dot at LEFT
