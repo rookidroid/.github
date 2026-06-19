@@ -3,7 +3,7 @@
  * Plugin Name:  RookiDroid Shop
  * Plugin URI:   https://rookidroid.com/
  * Description:  Custom-styled WooCommerce product grid shortcodes matching the RookiDroid brand design. Provides [rookidroid_products], [rookidroid_product_tabs], [rookidroid_shop_grid], and [rookidroid_featured_products].
- * Version:      1.5.0
+ * Version:      1.5.3
  * Author:       Zhengyu Peng
  * Author URI:   https://rookidroid.com/
  * License:      GPL-2.0-or-later
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'RD_SHOP_VERSION', '1.5.0' );
+define( 'RD_SHOP_VERSION', '1.5.3' );
 define( 'RD_SHOP_URL',     plugin_dir_url( __FILE__ ) );
 define( 'RD_SHOP_PATH',    plugin_dir_path( __FILE__ ) );
 
