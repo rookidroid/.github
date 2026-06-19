@@ -5,564 +5,72 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
 
-  <!-- ========================================================
-       NEVE / WORDPRESS INTEGRATION NOTES
-       ========================================================
-       1. Copy the CSS custom-property block (:root {...}) into
-          Appearance → Customize → Additional CSS.
-       2. Each section below maps to a Neve "Custom HTML" block
-          or a Starter Sites page-builder row.
-       3. Replace placeholder image paths with WordPress media
-          library URLs.
-       4. Product grids can be replaced with WooCommerce
-          shortcodes: [products category="robot" columns="4"]
-       5. The header/footer are handled by Neve's own builder —
-          the markup here is for preview only.
-       ======================================================== -->
-
-  <style>
-    /* ── Design Tokens ─────────────────────────────────── */
-    :root {
-      --clr-primary: #9c27b0;
-      --clr-primary-dark: #7b1fa2;
-      --clr-primary-light: #ce93d8;
-      --clr-primary-subtle: #f3e5f5;
-      --clr-primary-ghost: #faf5fb;
-      --clr-accent: #e040fb;
-      --clr-surface: #ffffff;
-      --clr-surface-alt: #f8f9fa;
-      --clr-surface-card: #ffffff;
-      --clr-text: #1a1a2e;
-      --clr-text-secondary: #555770;
-      --clr-text-muted: #8e8ea0;
-      --clr-border: #e8e8ed;
-      --clr-success: #2e7d32;
-      --clr-sale: #d32f2f;
-      --radius-sm: 8px;
-      --radius-md: 14px;
-      --radius-lg: 22px;
-      --radius-xl: 32px;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,.06);
-      --shadow-md: 0 4px 16px rgba(0,0,0,.08);
-      --shadow-lg: 0 8px 32px rgba(0,0,0,.10);
-      --shadow-glow: 0 4px 24px rgba(156,39,176,.18);
-      --transition: .25s cubic-bezier(.4,0,.2,1);
-      --font-body: 'Inter', system-ui, sans-serif;
-      --font-display: 'Space Grotesk', 'Inter', sans-serif;
-      --max-w: 1240px;
-    }
-
-    /* ── Reset & Base ──────────────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: var(--font-body);
-      color: var(--clr-text);
-      background: var(--clr-surface);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-    }
-    img { display: block; max-width: 100%; height: auto; }
-    a { color: inherit; text-decoration: none; }
-    ul { list-style: none; }
-
-    .container { width: 100%; max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
-
-    /* ── Utility ───────────────────────────────────────── */
-    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
-    .badge {
-      display: inline-block; font-size: .7rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .06em; padding: 4px 10px; border-radius: 50px;
-    }
-    .badge--sale { background: var(--clr-sale); color: #fff; }
-    .badge--free { background: var(--clr-success); color: #fff; }
-    .badge--new  { background: var(--clr-primary); color: #fff; }
-
-    /* ── Buttons ────────────────────────────────────────── */
-    .btn {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-family: var(--font-body); font-weight: 600; font-size: .95rem;
-      padding: 13px 28px; border-radius: var(--radius-sm); border: none;
-      cursor: pointer; transition: var(--transition);
-      text-decoration: none;
-    }
-    .btn--primary {
-      background: var(--clr-primary); color: #fff;
-      box-shadow: var(--shadow-glow);
-    }
-    .btn--primary:hover { background: var(--clr-primary-dark); transform: translateY(-1px); }
-    .btn--outline {
-      background: transparent; color: var(--clr-primary);
-      border: 2px solid var(--clr-primary);
-    }
-    .btn--outline:hover { background: var(--clr-primary-subtle) !important; color: var(--clr-primary) !important; border: 2px solid var(--clr-primary) !important; }
-    .btn--ghost { background: transparent; color: var(--clr-primary); padding: 8px 0; }
-    .btn--ghost:hover { gap: 12px; background: transparent !important;  color: var(--clr-primary) !important; }
-    .btn--sm { font-size: .85rem; padding: 9px 18px; }
-
-    /* ── Hero ────────────────────────────────────────────── */
-    .hero {
-      position: relative; overflow: hidden;
-      padding: 100px 0 80px;
-      background: linear-gradient(135deg, var(--clr-primary-ghost) 0%, #fff 50%, var(--clr-primary-subtle) 100%);
-    }
-    .hero::before {
-      content: ''; position: absolute; top: -200px; right: -200px;
-      width: 600px; height: 600px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(156,39,176,.08) 0%, transparent 70%);
-    }
-    .hero .container {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
-    }
-    .hero__content { position: relative; z-index: 2; }
-    .hero__tag {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: var(--clr-primary-subtle); color: var(--clr-primary);
-      font-size: .8rem; font-weight: 600; padding: 6px 14px;
-      border-radius: 50px; margin-bottom: 20px;
-    }
-    .hero__tag svg { width: 14px; height: 14px; }
-    .hero__title {
-      font-family: var(--font-display); font-weight: 800;
-      font-size: clamp(2.2rem, 4vw, 3.4rem); line-height: 1.12;
-      margin-bottom: 20px;
-    }
-    .hero__title span { color: var(--clr-primary); }
-    .hero__subtitle {
-      font-size: 1.1rem; color: var(--clr-text-secondary);
-      max-width: 480px; margin-bottom: 32px; line-height: 1.7;
-    }
-    .hero__actions { display: flex; gap: 14px; flex-wrap: wrap; }
-    .hero__stats {
-      display: flex; gap: 40px; margin-top: 48px;
-      padding-top: 32px; border-top: 1px solid var(--clr-border);
-    }
-    .hero__stat-value {
-      font-family: var(--font-display); font-weight: 700;
-      font-size: 1.6rem; color: var(--clr-primary);
-    }
-    .hero__stat-label { font-size: .82rem; color: var(--clr-text-muted); margin-top: 2px; }
-    .hero__visual {
-      position: relative; display: flex; align-items: center; justify-content: center;
-    }
-    .hero__float-card {
-      position: absolute; background: #fff; border-radius: var(--radius-md);
-      padding: 14px 18px; box-shadow: var(--shadow-md);
-      display: flex; align-items: center; gap: 10px;
-      font-size: .85rem; font-weight: 500;
-    }
-    .hero__float-card--top { top: -32px; right: -16px; }
-    .hero__float-card--bottom { bottom: -32px; left: -16px; }
-    .hero__float-icon {
-      width: 38px; height: 38px; border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.2rem;
-    }
-    .hero__float-icon--purple { background: var(--clr-primary-subtle); color: var(--clr-primary); }
-    .hero__float-icon--green { background: #e8f5e9; color: var(--clr-success); }
-
-    /* ── Section Shared ────────────────────────────────── */
-    .section { padding: 90px 0; }
-    .section--alt { background: var(--clr-surface-alt); }
-    .section__header { text-align: center; margin-bottom: 56px; }
-    .section__tag {
-      display: inline-block; font-size: .78rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .1em;
-      color: var(--clr-primary); margin-bottom: 12px;
-    }
-    .section__title {
-      font-family: var(--font-display); font-weight: 700;
-      font-size: clamp(1.6rem, 3vw, 2.4rem); margin-bottom: 14px;
-    }
-    .section__subtitle {
-      font-size: 1.05rem; color: var(--clr-text-secondary);
-      max-width: 560px; margin: 0 auto;
-    }
-
-    /* ── Category Cards ────────────────────────────────── */
-    .categories { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-    .cat-card {
-      background: var(--clr-surface-card); border: 1px solid var(--clr-border);
-      border-radius: var(--radius-md); padding: 36px 28px;
-      text-align: center; transition: var(--transition);
-      position: relative; overflow: hidden;
-    }
-    .cat-card:hover {
-      border-color: var(--clr-primary-light);
-      box-shadow: var(--shadow-glow);
-      transform: translateY(-4px);
-    }
-    .cat-card__icon {
-      width: 64px; height: 64px; border-radius: 16px;
-      background: var(--clr-primary-subtle); color: var(--clr-primary);
-      display: inline-flex; align-items: center; justify-content: center;
-      font-size: 1.8rem; margin-bottom: 20px;
-    }
-    .cat-card__title {
-      font-family: var(--font-display); font-weight: 700;
-      font-size: 1.15rem; margin-bottom: 8px;
-    }
-    .cat-card__desc { font-size: .9rem; color: var(--clr-text-secondary); margin-bottom: 18px; line-height: 1.6; }
-    .cat-card__count {
-      font-size: .8rem; font-weight: 600; color: var(--clr-primary);
-    }
-
-    /* ── Product Grid ──────────────────────────────────── */
-    .product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
-    .product-card {
-      background: var(--clr-surface-card); border: 1px solid var(--clr-border);
-      border-radius: var(--radius-md); overflow: hidden;
-      transition: var(--transition); position: relative;
-    }
-    .product-card:hover {
-      border-color: var(--clr-primary-light);
-      box-shadow: var(--shadow-md);
-      transform: translateY(-3px);
-    }
-    .product-card__badges {
-      position: absolute; top: 12px; left: 12px; z-index: 2;
-      display: flex; gap: 6px;
-    }
-    .product-card__image {
-      aspect-ratio: 1; background: var(--clr-surface-alt);
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden; position: relative;
-    }
-    .product-card__image-placeholder {
-      font-size: 3rem; opacity: .25; color: var(--clr-primary);
-    }
-    .product-card__overlay {
-      position: absolute; inset: 0;
-      background: rgba(156,39,176,.06);
-      opacity: 0; transition: var(--transition);
-      display: flex; align-items: center; justify-content: center;
-    }
-    .product-card:hover .product-card__overlay { opacity: 1; }
-    .product-card__body { padding: 18px; }
-    .product-card__category {
-      font-size: .72rem; font-weight: 600; text-transform: uppercase;
-      letter-spacing: .06em; color: var(--clr-primary); margin-bottom: 6px;
-    }
-    .product-card__title {
-      font-weight: 600; font-size: .95rem; margin-bottom: 10px;
-      line-height: 1.4;
-    }
-    .product-card__price { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
-    .product-card__price-current {
-      font-family: var(--font-display); font-weight: 700;
-      font-size: 1.1rem; color: var(--clr-primary);
-    }
-    .product-card__price-original {
-      font-size: .85rem; color: var(--clr-text-muted);
-      text-decoration: line-through;
-    }
-    .product-card__action { width: 100%; }
-
-    /* ── Tabs ───────────────────────────────────────────── */
-    .tabs { display: flex; justify-content: center; gap: 8px; margin-bottom: 40px; flex-wrap: wrap; }
-    .tab-btn {
-      font-family: var(--font-body); font-size: .88rem; font-weight: 500;
-      padding: 9px 22px; border-radius: 50px; border: 1.5px solid var(--clr-border);
-      background: transparent; color: var(--clr-text-secondary);
-      cursor: pointer; transition: var(--transition);
-    }
-    .tab-btn:hover { border-color: var(--clr-primary-light); color: var(--clr-primary); }
-    .tab-btn--active {
-      background: var(--clr-primary); color: #fff;
-      border-color: var(--clr-primary);
-    }
-
-    /* ── About / Story ─────────────────────────────────── */
-    .about-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
-    }
-    .about__image {
-      border-radius: var(--radius-lg); overflow: hidden;
-      background: var(--clr-primary-subtle); aspect-ratio: 4/3;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: var(--shadow-md);
-    }
-    .about__image-placeholder { font-size: 4rem; opacity: .3; color: var(--clr-primary); }
-    .about__tag {
-      display: inline-block; font-size: .78rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .1em;
-      color: var(--clr-primary); margin-bottom: 12px;
-    }
-    .about__title {
-      font-family: var(--font-display); font-weight: 700;
-      font-size: 1.8rem; margin-bottom: 18px; line-height: 1.25;
-    }
-    .about__text { color: var(--clr-text-secondary); margin-bottom: 16px; line-height: 1.75; }
-    .about__highlights { display: flex; gap: 24px; margin-top: 28px; }
-    .about__highlight {
-      display: flex; align-items: center; gap: 10px;
-      font-size: .9rem; font-weight: 500;
-    }
-    .about__highlight-icon {
-      width: 36px; height: 36px; border-radius: 10px;
-      background: var(--clr-primary-subtle); color: var(--clr-primary);
-      display: flex; align-items: center; justify-content: center;
-    }
-
-    /* ── Custom Gadgets CTA ────────────────────────────── */
-    .custom-cta {
-      background: linear-gradient(135deg, var(--clr-primary) 0%, var(--clr-primary-dark) 100%);
-      border-radius: var(--radius-lg); padding: 64px; color: #fff;
-      display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;
-    }
-    .custom-cta__title {
-      font-family: var(--font-display); font-weight: 700;
-      font-size: clamp(1.5rem, 2.5vw, 2rem); margin-bottom: 16px;
-    }
-    .custom-cta__text { opacity: .9; margin-bottom: 28px; line-height: 1.7; }
-    .custom-cta__items { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .custom-cta__item {
-      background: rgba(255,255,255,.12); border-radius: var(--radius-sm);
-      padding: 20px; text-align: center; backdrop-filter: blur(4px);
-      border: 1px solid rgba(255,255,255,.15);
-    }
-    .custom-cta__item-icon { font-size: 1.8rem; margin-bottom: 8px; }
-    .custom-cta__item-label { font-size: .85rem; font-weight: 500; }
-    .btn--white { background: #fff; color: var(--clr-primary); }
-    .btn--white:hover { background: var(--clr-primary-subtle); transform: translateY(-1px); color: var(--clr-primary) !important;}
-
-    /* ── Testimonials / Social Proof ────────────────────── */
-    .social-row {
-      display: flex; justify-content: center; gap: 48px; flex-wrap: wrap;
-      padding: 32px 0;
-    }
-    .social-item {
-      display: flex; align-items: center; gap: 12px;
-      font-size: .92rem; color: var(--clr-text-secondary);
-    }
-    .social-item svg { width: 28px; height: 28px; color: var(--clr-text-muted); }
-
-    /* ── Newsletter ─────────────────────────────────────── */
-    .newsletter {
-      text-align: center; max-width: 540px; margin: 0 auto;
-    }
-    .newsletter__form {
-      display: flex; gap: 10px; margin-top: 24px;
-    }
-    .newsletter__input {
-      flex: 1; padding: 14px 18px; border: 1.5px solid var(--clr-border);
-      border-radius: var(--radius-sm); font-family: var(--font-body);
-      font-size: .95rem; transition: var(--transition);
-      background: var(--clr-surface);
-    }
-    .newsletter__input:focus {
-      outline: none; border-color: var(--clr-primary);
-      box-shadow: 0 0 0 3px var(--clr-primary-subtle);
-    }
-
-    /* ── Responsive ─────────────────────────────────────── */
-    @media (max-width: 1024px) {
-      .hero .container { grid-template-columns: 1fr; text-align: center; }
-      .hero__subtitle { margin: 0 auto 32px; }
-      .hero__actions { justify-content: center; }
-      .hero__stats { justify-content: center; }
-      .hero__visual { order: -1; max-width: 480px; margin: 0 auto; }
-      .hero__float-card--top { top: -16px; right: 8px; }
-      .hero__float-card--bottom { bottom: -32px; left: 8px; }
-      .categories { grid-template-columns: 1fr 1fr; }
-      .product-grid { grid-template-columns: repeat(2, 1fr); }
-      .about-grid { grid-template-columns: 1fr; }
-      .custom-cta { grid-template-columns: 1fr; padding: 40px 28px; }
-      .footer-grid { grid-template-columns: 1fr 1fr; }
-    }
-    @media (max-width: 640px) {
-      .nav-links { display: none; }
-      .nav-toggle { display: block; }
-      .categories { grid-template-columns: 1fr; }
-      .product-grid { grid-template-columns: 1fr; }
-      .hero__stats { flex-direction: column; gap: 20px; }
-      .custom-cta__items { grid-template-columns: 1fr; }
-      .footer-grid { grid-template-columns: 1fr; }
-      .newsletter__form { flex-direction: column; }
-      .footer__bottom { flex-direction: column; gap: 12px; text-align: center; }
-    }
-
-    /* ── Nav Mobile Overlay ─────────────────────────────── */
-    .mobile-nav {
-      display: none; position: fixed; inset: 0; z-index: 200;
-      background: rgba(0,0,0,.4); backdrop-filter: blur(4px);
-    }
-    .mobile-nav.is-open { display: block; }
-    .mobile-nav__panel {
-      position: absolute; top: 0; right: 0;
-      width: 280px; height: 100%; background: #fff;
-      padding: 24px; box-shadow: var(--shadow-lg);
-    }
-    .mobile-nav__close {
-      background: none; border: none; font-size: 1.4rem;
-      cursor: pointer; float: right; color: var(--clr-text);
-    }
-    .mobile-nav__links { margin-top: 48px; }
-    .mobile-nav__links a {
-      display: block; padding: 14px 0; font-size: 1.05rem;
-      font-weight: 500; border-bottom: 1px solid var(--clr-border);
-      color: var(--clr-text-secondary);
-    }
-    .mobile-nav__links a:hover { color: var(--clr-primary); }
-
-    /* ── Hero Slider ────────────────────────────────── */
-    .hero__slider {
-      position: relative; border-radius: var(--radius-xl);
-      overflow: hidden; box-shadow: var(--shadow-lg);
-      aspect-ratio: 4 / 3; width: 100%;
-      background: var(--clr-primary-subtle);
-    }
-    .hero__slides {
-      display: flex; width: 100%; height: 100%;
-      transition: transform .5s cubic-bezier(.4,0,.2,1);
-    }
-    .hero__slide {
-      min-width: 100%; height: 100%; flex-shrink: 0;
-      position: relative;
-    }
-    .hero__slide img {
-      width: 100%; height: 100%; object-fit: cover; display: block;
-    }
-    .hero__slide-caption {
-      position: absolute; bottom: 0; left: 0; right: 0;
-      padding: 14px 18px;
-      background: linear-gradient(to top, rgba(0,0,0,.52) 0%, transparent 100%);
-      color: #fff; font-size: .82rem; font-weight: 500;
-    }
-    .hero__slider-btn {
-      /* Layout — resist Neve/WooCommerce button overrides */
-      position: absolute !important;
-      top: 50% !important;
-      transform: translateY(-50%) !important;
-      z-index: 4;
-      /* Size & shape */
-      width: 38px !important;
-      height: 38px !important;
-      min-width: 0 !important;
-      min-height: 0 !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      border: none !important;
-      border-radius: 50% !important;
-      outline: none;
-      -webkit-appearance: none;
-      appearance: none;
-      /* Visual */
-      background: rgba(255,255,255,.88) !important;
-      color: var(--clr-primary) !important;
-      box-shadow: var(--shadow-sm);
-      backdrop-filter: blur(4px);
-      /* Content */
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      line-height: 1;
-      font-size: 0;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-    .hero__slider-btn svg {
-      width: 18px !important;
-      height: 18px !important;
-      flex-shrink: 0;
-      display: block;
-    }
-    .hero__slider-btn:hover {
-      background: #fff !important;
-      box-shadow: var(--shadow-md);
-      transform: translateY(-50%) scale(1.08) !important;
-    }
-    .hero__slider-btn--prev { left: 10px; }
-    .hero__slider-btn--next { right: 10px; }
-    .hero__dots {
-      position: absolute; bottom: 12px; left: 50%;
-      transform: translateX(-50%);
-      display: flex; gap: 6px; z-index: 4;
-    }
-    .hero__dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: rgba(255,255,255,.5); border: none;
-      cursor: pointer; padding: 0; transition: var(--transition);
-    }
-    .hero__dot--active { background: #fff; transform: scale(1.3); }
-    /* Float card text fade */
-    .hero__float-label, .hero__float-sub {
-      transition: opacity .25s ease, transform .25s ease;
-    }
-    .hero__float-card--fading .hero__float-label,
-    .hero__float-card--fading .hero__float-sub {
-      opacity: 0; transform: translateY(-4px);
-    }
-  </style>
-
-
-
 
 <!-- ═══════════════════════════════════════════════════════
      HERO
      ═══════════════════════════════════════════════════════ -->
-<section class="hero">
+<section class="home-hero">
   <div class="container">
-    <div class="hero__content">
-      <div class="hero__tag">
+    <div class="home-hero__content">
+      <div class="home-hero__tag">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
         Open-Source Robotics
       </div>
-      <h1 class="hero__title">
+      <h1 class="home-hero__title">
         Make Robotics<br><span>Accessible &amp; Fun</span><br>for Everyone
       </h1>
-      <p class="hero__subtitle">
+      <p class="home-hero__subtitle">
         3D-printed robots, custom controller boards, and design files — crafted by an engineer, tested by kids, loved by makers.
       </p>
-      <div class="hero__actions">
+      <div class="home-hero__actions">
         <a href="https://rookidroid.com/shop/" class="btn btn--primary">
           Explore the Shop
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
         </a>
         <a href="https://rookidroid.com/about-rookidroid/" class="btn btn--outline">Learn More</a>
       </div>
-      <div class="hero__stats">
+      <div class="home-hero__stats">
         <div>
-          <div class="hero__stat-value">Free</div>
-          <div class="hero__stat-label">3D Print Files</div>
+          <div class="home-hero__stat-value">Free</div>
+          <div class="home-hero__stat-label">3D Print Files</div>
         </div>
         <div>
-          <div class="hero__stat-value">Open</div>
-          <div class="hero__stat-label">Source Code</div>
+          <div class="home-hero__stat-value">Open</div>
+          <div class="home-hero__stat-label">Source Code</div>
         </div>
         <div>
-          <div class="hero__stat-value">100%</div>
-          <div class="hero__stat-label">Hand-Tested</div>
+          <div class="home-hero__stat-value">100%</div>
+          <div class="home-hero__stat-label">Hand-Tested</div>
         </div>
       </div>
     </div>
-    <div class="hero__visual">
-      <div class="hero__slider" id="heroSlider">
-        <div class="hero__slides" id="heroSlides">
-          <div class="hero__slide" data-title="Hexapod Mochi" data-sub="Open-source walking robot" data-icon="🪲">
+    <div class="home-hero__visual">
+      <div class="home-hero__slider" id="heroSlider">
+        <div class="home-hero__slides" id="heroSlides">
+          <div class="home-hero__slide" data-title="Hexapod Mochi" data-sub="Open-source walking robot" data-icon="🪲">
             <img src="https://rookidroid.com/wp-content/uploads/2026/06/dji_mimo_20260601_205720_0_1780361982375_photo-EDIT.jpg" alt="Hexapod Mochi — 3D printed walking robot" loading="eager">
           </div>
-          <div class="hero__slide" data-title="Smarty" data-sub="Compact ESP32 robot car" data-icon="🚗">
+          <div class="home-hero__slide" data-title="Smarty" data-sub="Compact ESP32 robot car" data-icon="🚗">
             <img src="https://rookidroid.com/wp-content/uploads/2025/05/IMG_3476-EDIT.jpg" alt="Smarty robot car" loading="lazy">
           </div>
         </div>
-        <button class="hero__slider-btn hero__slider-btn--prev" aria-label="Previous slide" onclick="heroSlide(-1)">
+        <button class="home-hero__slider-btn home-hero__slider-btn--prev" aria-label="Previous slide" onclick="heroSlide(-1)">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
         </button>
-        <button class="hero__slider-btn hero__slider-btn--next" aria-label="Next slide" onclick="heroSlide(1)">
+        <button class="home-hero__slider-btn home-hero__slider-btn--next" aria-label="Next slide" onclick="heroSlide(1)">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </button>
-        <div class="hero__dots" id="heroDots"></div>
+        <div class="home-hero__dots" id="heroDots"></div>
       </div>
-      <div class="hero__float-card hero__float-card--top" id="heroFloatCard">
-        <div class="hero__float-icon hero__float-icon--purple" id="heroFloatIcon">🪲</div>
+      <div class="home-hero__float-card home-hero__float-card--top" id="heroFloatCard">
+        <div class="home-hero__float-icon home-hero__float-icon--purple" id="heroFloatIcon">🪲</div>
         <div>
-          <div class="hero__float-label" id="heroFloatTitle" style="font-weight:600;">Hexapod Mochi</div>
-          <div class="hero__float-sub" id="heroFloatSub" style="font-size:.75rem;color:var(--clr-text-muted);">Open-source walking robot</div>
+          <div class="home-hero__float-label" id="heroFloatTitle" style="font-weight:600;">Hexapod Mochi</div>
+          <div class="home-hero__float-sub" id="heroFloatSub" style="font-size:.75rem;color:var(--clr-text-muted);">Open-source walking robot</div>
         </div>
       </div>
-      <div class="hero__float-card hero__float-card--bottom">
-        <div class="hero__float-icon hero__float-icon--green">✓</div>
+      <div class="home-hero__float-card home-hero__float-card--bottom">
+        <div class="home-hero__float-icon home-hero__float-icon--green">✓</div>
         <div>
           <div style="font-weight:600;">Free 3D Files</div>
           <div style="font-size:.75rem;color:var(--clr-text-muted);">Ready to print</div>
@@ -711,7 +219,7 @@
   var dotsWrap = document.getElementById('heroDots');
   if (!slider || !track) return;
 
-  var slides   = track.querySelectorAll('.hero__slide');
+  var slides   = track.querySelectorAll('.home-hero__slide');
   var total    = slides.length;
   var current  = 0;
   var timer;
@@ -719,7 +227,7 @@
   // Build dots
   slides.forEach(function (_, i) {
     var dot = document.createElement('button');
-    dot.className = 'hero__dot' + (i === 0 ? ' hero__dot--active' : '');
+    dot.className = 'home-hero__dot' + (i === 0 ? ' home-hero__dot--active' : '');
     dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
     dot.addEventListener('click', function () { goTo(i); });
     dotsWrap.appendChild(dot);
@@ -732,20 +240,20 @@
 
   function updateFloatCard(slide) {
     if (!floatCard) return;
-    floatCard.classList.add('hero__float-card--fading');
+    floatCard.classList.add('home-hero__float-card--fading');
     setTimeout(function () {
       floatIcon.textContent  = slide.dataset.icon  || '🦾';
       floatTitle.textContent = slide.dataset.title || '';
       floatSub.innerHTML     = slide.dataset.sub   || '';
-      floatCard.classList.remove('hero__float-card--fading');
+      floatCard.classList.remove('home-hero__float-card--fading');
     }, 250);
   }
 
   function goTo(n) {
     current = (n + total) % total;
     track.style.transform = 'translateX(-' + (current * 100) + '%)';
-    dotsWrap.querySelectorAll('.hero__dot').forEach(function (d, i) {
-      d.classList.toggle('hero__dot--active', i === current);
+    dotsWrap.querySelectorAll('.home-hero__dot').forEach(function (d, i) {
+      d.classList.toggle('home-hero__dot--active', i === current);
     });
     updateFloatCard(slides[current]);
     resetTimer();
