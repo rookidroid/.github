@@ -348,119 +348,113 @@
   border-radius: 50%;
   pointer-events: none;
 }
-.hxt-instructions h2 {
+.hxt-instr-hero {
+  text-align: center;
+  margin-bottom: 32px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  position: relative;
+  z-index: 1;
+}
+.hxt-instr-hero h2 {
   font-family: 'Space Grotesk', Inter, system-ui, sans-serif;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 800;
   color: #fff;
-  margin: 0 0 24px;
-  text-align: center;
+  margin: 0 0 16px;
   text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+.hxt-instr-hero p {
+  color: rgba(255,255,255,0.85);
+  font-size: .95rem;
+  line-height: 1.6;
+  max-width: 500px;
+  margin: 0 auto 24px;
+}
+.hxt-instr-hero-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #ab47bc 0%, #7b1fa2 100%);
+  color: #fff !important;
+  font-weight: 700;
+  font-size: 1.05rem;
+  padding: 14px 32px;
+  border-radius: 50px;
+  text-decoration: none !important;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(156, 39, 176, 0.4);
+  border: 1px solid rgba(255,255,255,0.15);
+}
+.hxt-instr-hero-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(156, 39, 176, 0.6);
+  filter: brightness(1.1);
+}
+
+.hxt-instr-resources {
   position: relative;
   z-index: 1;
 }
-.hxt-instr-grid {
+.hxt-instr-resources h3 {
+  font-family: 'Space Grotesk', Inter, sans-serif;
+  font-size: .95rem;
+  color: rgba(255,255,255,0.7);
+  margin: 0 0 16px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.hxt-res-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
-  position: relative;
-  z-index: 1;
 }
-@media (max-width: 1024px) {
-  .hxt-instr-grid {
+@media (max-width: 768px) {
+  .hxt-res-grid {
     grid-template-columns: 1fr;
   }
 }
-.hxt-instr-card {
+.hxt-res-card {
   background: rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-  border-left: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
-  padding: 18px 20px;
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s, border-color 0.3s, box-shadow 0.3s;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.hxt-instr-card:hover {
-  transform: translateY(-4px);
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(156, 39, 176, 0.4);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25), 0 0 15px rgba(156, 39, 176, 0.15);
-}
-.hxt-instr-card-header {
+  padding: 16px 20px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  color: #fff;
-  font-size: .95rem;
-  font-weight: 700;
-  margin-bottom: 16px;
+  gap: 14px;
+  text-decoration: none !important;
+  transition: all 0.3s ease;
 }
-.hxt-instr-icon {
+.hxt-res-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(156, 39, 176, 0.4);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2), 0 0 15px rgba(156, 39, 176, 0.15);
+}
+.hxt-res-icon {
   font-size: 1.6rem;
   flex-shrink: 0;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
-.hxt-instr-btns {
+.hxt-res-text {
   display: flex;
-  flex-direction: row;
-  gap: 10px;
+  flex-direction: column;
+  gap: 2px;
 }
-.hxt-instr-btn {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 10px 8px;
-  border-radius: 8px;
+.hxt-res-title {
+  color: #fff;
+  font-weight: 700;
+  font-size: .9rem;
+}
+.hxt-res-action {
+  color: #ab47bc;
   font-size: .75rem;
   font-weight: 600;
-  text-decoration: none !important;
-  transition: all 0.2s ease;
-  line-height: 1.2;
-  text-align: center;
-  white-space: nowrap;
-}
-.hxt-instr-btn:hover { 
-  transform: translateY(-2px);
-}
-.hxt-instr-btn-guide {
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.1);
-  color: #fff !important;
-}
-.hxt-instr-btn-guide:hover {
-  background: rgba(255,255,255,.12);
-  border-color: rgba(255,255,255,.25);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-.hxt-instr-btn-shop {
-  background: linear-gradient(135deg, #ab47bc 0%, #7b1fa2 100%);
-  border: 1px solid rgba(156, 39, 176, 0.5);
-  color: #fff !important;
-  box-shadow: 0 2px 8px rgba(156, 39, 176, 0.3);
-}
-.hxt-instr-btn-shop:hover {
-  box-shadow: 0 6px 16px rgba(156, 39, 176, 0.5);
-  filter: brightness(1.1);
-}
-@media (max-width: 680px) {
-  .hxt-instr-grid { grid-template-columns: 1fr; }
-  .hxt-instructions { padding: 28px 24px; }
-}
-@media (max-width: 480px) {
-  .hxt-instr-btns {
-    flex-direction: column;
-  }
-  .hxt-instr-btn {
-    white-space: normal;
-    padding: 12px 8px;
-  }
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 /* ── Entry backgrounds ─────────────────────────────────────────────── */
@@ -655,58 +649,45 @@
 
           <!-- Instructions -->
           <div class="hxt-instructions" style="margin-top:24px;margin-bottom:0;">
-            <h2>&#128218;&nbsp; Build Your Own - Mochi</h2>
-            <div class="hxt-instr-grid">
-
-              <!-- 3D Printing & Assembly -->
-              <div class="hxt-instr-card">
-                <div class="hxt-instr-card-header">
-                  <span class="hxt-instr-icon">🖨️</span>
-                  <span>3D Printing &amp; Assembly</span>
-                </div>
-                <div class="hxt-instr-btns">
-                  <a class="hxt-instr-btn hxt-instr-btn-guide" href="https://rookidroid.com/hexapod-mochi-3d-printing-and-assembly/" target="_blank" rel="noopener">📖 Guide</a>
-                  <a class="hxt-instr-btn hxt-instr-btn-shop" href="https://rookidroid.com/product/hexapod-mochi/" target="_blank" rel="noopener">⬇️ Free Download</a>
-                </div>
-              </div>
-
-              <!-- Electronics -->
-              <div class="hxt-instr-card">
-                <div class="hxt-instr-card-header">
-                  <span class="hxt-instr-icon">⚡</span>
-                  <span>Electronics (ESP32)</span>
-                </div>
-                <div class="hxt-instr-btns">
-                  <a class="hxt-instr-btn hxt-instr-btn-guide" href="https://rookidroid.com/hexapod-mochi-electronics-esp32/" target="_blank" rel="noopener">📖 Guide</a>
-                  <a class="hxt-instr-btn hxt-instr-btn-shop" href="https://rookidroid.com/product/hexapod-controller-board-esp32/" target="_blank" rel="noopener">🛒 Shop</a>
-                </div>
-              </div>
-
-              <!-- Software -->
-              <div class="hxt-instr-card">
-                <div class="hxt-instr-card-header">
-                  <span class="hxt-instr-icon">💻</span>
-                  <span>Software</span>
-                </div>
-                <div class="hxt-instr-btns">
-                  <a class="hxt-instr-btn hxt-instr-btn-guide" href="https://rookidroid.com/hexapod-mochi-software-esp32/" target="_blank" rel="noopener">📖 Guide</a>
-                  <a class="hxt-instr-btn hxt-instr-btn-shop" href="https://github.com/rookidroid/hexapod/tree/mochi/software/hexapod_esp32" target="_blank" rel="noopener">⬇️ Free Download</a>
-                </div>
-              </div>
-
-              <!-- Calibration -->
-              <div class="hxt-instr-card">
-                <div class="hxt-instr-card-header">
-                  <span class="hxt-instr-icon">🎯</span>
-                  <span>Calibration</span>
-                </div>
-                <div class="hxt-instr-btns">
-                  <a class="hxt-instr-btn hxt-instr-btn-guide" href="https://rookidroid.com/hexapod-mochi-calibrationesp32/" target="_blank" rel="noopener">📖 Guide</a>
-                  <span class="hxt-instr-btn" aria-hidden="true" style="visibility:hidden;"></span>
-                </div>
-              </div>
-
+            
+            <div class="hxt-instr-hero">
+              <h2>&#128218;&nbsp; Build Your Own - Mochi</h2>
+              <p>Everything you need to 3D print, assemble, wire, and calibrate your Mochi hexapod is now consolidated into one comprehensive, step-by-step build guide.</p>
+              <a href="https://rookidroid.com/build-your-own-mochi/" target="_blank" rel="noopener" class="hxt-instr-hero-btn">📖 Read the Full Build Guide</a>
             </div>
+            
+            <div class="hxt-instr-resources">
+              <h3>Downloads &amp; Parts</h3>
+              <div class="hxt-res-grid">
+                <!-- 3D Print Files -->
+                <a class="hxt-res-card" href="https://rookidroid.com/product/hexapod-mochi/" target="_blank" rel="noopener">
+                  <span class="hxt-res-icon">🖨️</span>
+                  <div class="hxt-res-text">
+                    <span class="hxt-res-title">3D Print Files</span>
+                    <span class="hxt-res-action">⬇️ Free Download</span>
+                  </div>
+                </a>
+                
+                <!-- ESP32 Controller -->
+                <a class="hxt-res-card" href="https://rookidroid.com/product/hexapod-controller-board-esp32/" target="_blank" rel="noopener">
+                  <span class="hxt-res-icon">⚡</span>
+                  <div class="hxt-res-text">
+                    <span class="hxt-res-title">ESP32 Controller</span>
+                    <span class="hxt-res-action">🛒 Shop Part</span>
+                  </div>
+                </a>
+                
+                <!-- Software Bundle -->
+                <a class="hxt-res-card" href="https://github.com/rookidroid/hexapod/tree/mochi/software/hexapod_esp32" target="_blank" rel="noopener">
+                  <span class="hxt-res-icon">💻</span>
+                  <div class="hxt-res-text">
+                    <span class="hxt-res-title">Software Bundle</span>
+                    <span class="hxt-res-action">⬇️ GitHub Repo</span>
+                  </div>
+                </a>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>

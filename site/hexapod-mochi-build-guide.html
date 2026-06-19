@@ -1,0 +1,313 @@
+<div class="progress-track">
+  <div class="progress-fill" id="progress" style="width: 25%"></div>
+</div>
+
+<section class="hero">
+  <div class="eyebrow">Open-source hexapod robot</div>
+  <h1>Build the<br><em>Hexapod Mochi</em></h1>
+  <p class="hero-desc">A complete four-phase guide — from 3D printing through electronics, firmware, and calibration.</p>
+  <div class="hero-meta">
+    <div class="meta-item">
+      <span class="meta-label">Servos</span>
+      <span class="meta-val">18 × MG92B</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Controller</span>
+      <span class="meta-val">ESP32</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Material</span>
+      <span class="meta-val">PLA / PETG</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Power</span>
+      <span class="meta-val">2 × 18650</span>
+    </div>
+  </div>
+</section>
+
+<div class="phase-nav-wrap">
+  <nav class="phase-nav" role="tablist" aria-label="Build phases">
+    <button class="phase-btn active" role="tab" aria-selected="true" onclick="showPhase(0, this)">
+      <span class="num">01</span>3D Print &amp; Assembly
+    </button>
+    <button class="phase-btn" role="tab" aria-selected="false" onclick="showPhase(1, this)">
+      <span class="num">02</span>Electronics
+    </button>
+    <button class="phase-btn" role="tab" aria-selected="false" onclick="showPhase(2, this)">
+      <span class="num">03</span>Software
+    </button>
+    <button class="phase-btn" role="tab" aria-selected="false" onclick="showPhase(3, this)">
+      <span class="num">04</span>Calibration
+    </button>
+  </nav>
+</div>
+
+<main class="content">
+
+  <!-- ─────────────────── PHASE 1 ─────────────────── -->
+  <div class="phase visible" id="phase-0" role="tabpanel">
+
+    <div class="alert alert-warn">
+      <span class="alert-icon">⚠</span>
+      <span><strong>Critical:</strong> Do NOT tighten servo horn screws during assembly. Leave them loose — you'll tighten them properly during calibration after setting each servo to its neutral position.</span>
+    </div>
+
+    <div class="section-head"><h2>Print settings</h2></div>
+    <div class="card">
+      <div class="card-row">
+        <div class="card-stat"><span class="stat-label">Layer height</span><span class="stat-val">0.2 mm</span></div>
+        <div class="card-stat"><span class="stat-label">Infill</span><span class="stat-val">20–30%</span></div>
+        <div class="card-stat"><span class="stat-label">Material</span><span class="stat-val">PLA / PETG</span></div>
+        <div class="card-stat"><span class="stat-label">Supports</span><span class="stat-val">Some parts</span></div>
+      </div>
+    </div>
+
+    <div class="section-head"><h2>Body components — ×1 set</h2></div>
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ</span>
+      <span>Install servos before closing the body. Route wires neatly to avoid pinching. Test-fit all parts before final assembly.</span>
+    </div>
+    <div class="parts-grid">
+      <div class="part-card"><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/body_base.jpg" alt="body_base"><span class="part-name">body_base</span><span class="part-qty">×1</span></div>
+      <div class="part-card"><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/body_side.jpg" alt="body_side"><span class="part-name">body_side</span><span class="part-qty">×6</span></div>
+      <div class="part-card"><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/body_top.jpg" alt="body_top"><span class="part-name">body_top</span><span class="part-qty">×1</span></div>
+      <div class="part-card"><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/body_head.jpg" alt="body_head"><span class="part-name">body_head</span><span class="part-qty">×1</span></div>
+      <div class="part-card"><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/body_battery.jpg" alt="body_battery_top"><span class="part-name">body_battery_top</span><span class="part-qty">×1</span></div>
+      <div class="part-card"><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/body_servo_side.jpg" alt="body_servo_side"><span class="part-name">body_servo_side</span><span class="part-qty">×12</span></div>
+    </div>
+
+    <div class="section-head"><h2>Joint components — 3 standard + 3 mirrored</h2></div>
+    <div class="alert alert-warn">
+      <span class="alert-icon">⚠</span>
+      <span><strong>Left side legs</strong> use mirrored joints. <strong>Right side legs</strong> use standard joints. Refer to assembled robot images for correct orientations.</span>
+    </div>
+    <div class="parts-grid">
+      <div class="part-card"><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/joint_bottom.jpg" alt="joint_bottom"><span class="part-name">joint_bottom</span><span class="part-qty">×12</span></div>
+      <div class="part-card"><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/joint_cross.jpg" alt="joint_cross"><span class="part-name">joint_cross</span><span class="part-qty">×6</span></div>
+      <div class="part-card"><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/joint_top.jpg" alt="joint_top"><span class="part-name">joint_top</span><span class="part-qty">×12</span></div>
+    </div>
+
+    <div class="section-head"><h2>Leg components — ×6</h2></div>
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ</span>
+      <span>Ensure bearings are properly seated. Pins should slide in smoothly without forcing. Verify smooth joint rotation before proceeding.</span>
+    </div>
+    <div class="parts-grid">
+      <div class="part-card"><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/leg_bottom.jpg" alt="leg_bottom"><span class="part-name">leg_bottom</span><span class="part-qty">×6</span></div>
+      <div class="part-card"><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/leg_side.jpg" alt="leg_side"><span class="part-name">leg_side</span><span class="part-qty">×12</span></div>
+      <div class="part-card"><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/leg_top.jpg" alt="leg_top"><span class="part-name">leg_top</span><span class="part-qty">×6</span></div>
+    </div>
+
+    <div class="section-head"><h2>Foot components — 3 standard + 3 mirrored</h2></div>
+    <div class="alert alert-warn">
+      <span class="alert-icon">⚠</span>
+      <span>Match foot orientation with joint — left = mirrored, right = standard.</span>
+    </div>
+    <div class="parts-grid">
+      <div class="part-card"><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/foot_bottom.jpg" alt="foot_bottom"><span class="part-name">foot_bottom</span><span class="part-qty">×6</span></div>
+      <div class="part-card"><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/foot_top.jpg" alt="foot_top"><span class="part-name">foot_top</span><span class="part-qty">×6</span></div>
+      <div class="part-card"><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/foot_ground.jpg" alt="foot_ground"><span class="part-name">foot_ground</span><span class="part-qty">×6</span></div>
+      <div class="part-card accent"><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/foot_tip.jpg" alt="foot_tip"><span class="part-name">foot_tip <span class="badge badge-accent">TPU</span></span><span class="part-qty">×6</span></div>
+    </div>
+
+    <div class="section-head"><h2>Hardware</h2></div>
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ</span>
+      <span>Organize all hardware into labeled containers before assembly. Standard metric parts — available from Amazon, AliExpress, or local hardware stores.</span>
+    </div>
+    <div class="card">
+      <table>
+        <thead><tr><th>Item</th><th>Spec</th><th>Qty</th><th>Use</th></tr></thead>
+        <tbody>
+          <tr><td>Screw</td><td class="muted">M2 × 6mm hex socket</td><td>36</td><td class="muted">Servo mounting</td></tr>
+          <tr><td>Screw</td><td class="muted">M2 × 12mm countersunk</td><td>180</td><td class="muted">General assembly</td></tr>
+          <tr><td>Nut</td><td class="muted">M2 hex nut</td><td>216</td><td class="muted">Securing screws</td></tr>
+          <tr><td>Pin</td><td class="muted">M4 × 6mm stainless steel (304)</td><td>18</td><td class="muted">Joint pivots</td></tr>
+          <tr><td>Bearing</td><td class="muted">MR74-2RS — 4mm ID, 7mm OD, 2.5mm bore</td><td>18</td><td class="muted">Smooth joint rotation</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-head"><h2>Assembly order</h2></div>
+    <div class="card">
+      <div class="steps">
+        <div class="step"><div class="step-n">1</div><div class="step-body">Install servos in body before closing it — route wires neatly to avoid pinching<br><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/assembly_body.gif" alt="Body Assembly" style="max-width:300px; width:100%; margin-top:16px; border-radius:var(--rd-radius-sm); border:1px solid var(--rd-border);"></div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-body">Assemble joints: bottom → cross → top. Pay close attention to left vs right orientation<br><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/assembly_joint.gif" alt="Joint Assembly" style="max-width:300px; width:100%; margin-top:16px; border-radius:var(--rd-radius-sm); border:1px solid var(--rd-border);"></div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-body">Build each leg — seat bearings, insert pins (should slide smoothly without forcing)<br><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/assembly_leg.gif" alt="Leg Assembly" style="max-width:300px; width:100%; margin-top:16px; border-radius:var(--rd-radius-sm); border:1px solid var(--rd-border);"></div></div>
+        <div class="step"><div class="step-n">4</div><div class="step-body">Attach feet — verify orientation matches the joint (standard or mirrored)<br><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/assembly_foot.gif" alt="Foot Assembly" style="max-width:300px; width:100%; margin-top:16px; border-radius:var(--rd-radius-sm); border:1px solid var(--rd-border);"></div></div>
+        <div class="step"><div class="step-n">5</div><div class="step-body">Attach all 6 completed legs to the body<br><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/assembly_whole.gif" alt="Whole Assembly" style="max-width:300px; width:100%; margin-top:16px; border-radius:var(--rd-radius-sm); border:1px solid var(--rd-border);"></div></div>
+        <div class="step"><div class="step-n">6</div><div class="step-body">Connect servos and controller — then proceed to Electronics and Software before final tightening</div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ─────────────────── PHASE 2 ─────────────────── -->
+  <div class="phase" id="phase-1" role="tabpanel">
+
+    <div class="section-head"><h2>Components</h2></div>
+    <div class="card">
+      <table>
+        <thead><tr><th>Image</th><th>Component</th><th>Spec</th><th>Qty</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td style="width:80px; padding-right:16px;"><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/controller_esp32.png" alt="Controller" style="width:100%; border-radius:4px; border:1px solid var(--rd-border); background:var(--rd-surface); display:block;"></td><td style="vertical-align:middle; font-weight:500;">Controller board</td><td class="muted" style="vertical-align:middle;">ESP32 version — RookiDroid custom PCB</td><td style="vertical-align:middle; font-weight:600;">1</td><td class="muted" style="vertical-align:middle;"><a href="https://rookidroid.com/product/hexapod-controller-board-esp32/" style="color: var(--rd-primary); font-weight:600;">Purchase ↗</a></td></tr>
+          <tr><td style="width:80px; padding-right:16px;"><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/mg92b.jpg" alt="Servo" style="width:100%; border-radius:4px; border:1px solid var(--rd-border); background:var(--rd-surface); display:block;"></td><td style="vertical-align:middle; font-weight:500;">Servo</td><td class="muted" style="vertical-align:middle;">MG92B — 180° rotation</td><td style="vertical-align:middle; font-weight:600;">18</td><td class="muted" style="vertical-align:middle;"></td></tr>
+          <tr><td style="width:80px; padding-right:16px;"><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/switch.jpg" alt="Switch" style="width:100%; border-radius:4px; border:1px solid var(--rd-border); background:var(--rd-surface); display:block;"></td><td style="vertical-align:middle; font-weight:500;">Toggle switch</td><td class="muted" style="vertical-align:middle;">SPST, 6mm diameter</td><td style="vertical-align:middle; font-weight:600;">1</td><td class="muted" style="vertical-align:middle;"></td></tr>
+          <tr><td style="width:80px; padding-right:16px;"><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/battery.jpg" alt="Battery" style="width:100%; border-radius:4px; border:1px solid var(--rd-border); background:var(--rd-surface); display:block;"></td><td style="vertical-align:middle; font-weight:500;">18650 battery</td><td class="muted" style="vertical-align:middle;">3.7V Li-ion, 2000mAh+</td><td style="vertical-align:middle; font-weight:600;">2</td><td class="muted" style="vertical-align:middle;"><span class="badge badge-warn">Protected cells only</span></td></tr>
+          <tr><td style="width:80px; padding-right:16px;"><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/battery_holder.jpg" alt="Battery Holder" style="width:100%; border-radius:4px; border:1px solid var(--rd-border); background:var(--rd-surface); display:block;"></td><td style="vertical-align:middle; font-weight:500;">Battery holder</td><td class="muted" style="vertical-align:middle;">2-cell with wire leads</td><td style="vertical-align:middle; font-weight:600;">1</td><td class="muted" style="vertical-align:middle;"></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert alert-warn">
+      <span class="alert-icon">⚠</span>
+      <span><strong>Use protected 18650 batteries.</strong> Unprotected cells can be hazardous — the protection circuit guards against overcharge, over-discharge, and short circuits.</span>
+    </div>
+
+    <div class="section-head"><h2>Wiring</h2></div>
+    <div class="card">
+      <div class="steps">
+        <div class="step"><div class="step-n">1</div><div class="step-body">Connect each MG92B servo to the numbered ports on the controller board — 18 servos total (3 per leg)</div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-body">Install the toggle switch for main power</div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-body">Connect the 2-cell 18650 battery holder to the board's power input</div></div>
+        <div class="step"><div class="step-n">4</div><div class="step-body">Refer to the wiring diagram below for exact pin assignments<br><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/pcb_diagram_esp32.jpg" alt="Wiring diagram" style="max-width:100%; margin-top:16px; border-radius:var(--rd-radius-sm); border:1px solid var(--rd-border); box-shadow:var(--rd-shadow-sm);"></div></div>
+      </div>
+    </div>
+
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ</span>
+      <span>The custom controller board simplifies wiring significantly — all servo connectors and power management are built in. <a href="https://rookidroid.com/product/hexapod-controller-board-esp32/" style="color:inherit">Available from the RookiDroid shop.</a></span>
+    </div>
+
+  </div>
+
+  <!-- ─────────────────── PHASE 3 ─────────────────── -->
+  <div class="phase" id="phase-2" role="tabpanel">
+
+    <div class="section-head"><h2>Dependencies</h2></div>
+    <div class="card">
+      <table>
+        <thead><tr><th>Library</th><th>How to install</th></tr></thead>
+        <tbody>
+          <tr><td><code>arduino-esp32</code></td><td class="muted">Add board support URL in Arduino IDE → Boards Manager</td></tr>
+          <tr><td><code>Adafruit PWM Servo Driver</code></td><td class="muted">Arduino IDE → Library Manager → search and install</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-head"><h2>Upload steps</h2></div>
+    <div class="card">
+      <div class="steps">
+        <div class="step"><div class="step-n">1</div><div class="step-body">Install <strong>Arduino IDE</strong> from <a href="https://www.arduino.cc/en/software" style="color:var(--info)">arduino.cc ↗</a></div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-body">Install <code>arduino-esp32</code> board support following the <a href="https://docs.espressif.com/projects/arduino-esp32/en/latest/installing.html" style="color:var(--info)">Espressif instructions ↗</a></div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-body">Install both required libraries through <strong>Arduino Library Manager</strong></div></div>
+        <div class="step"><div class="step-n">4</div><div class="step-body">Download the firmware from <a href="https://github.com/rookidroid/hexapod/tree/mochi/software/hexapod_esp32" style="color:var(--info)">GitHub ↗</a> and open <code>hexapod_esp32.ino</code></div></div>
+        <div class="step"><div class="step-n">5</div><div class="step-body">Select board: <code>ESP32 Dev Module</code> in Arduino IDE</div></div>
+        <div class="step"><div class="step-n">6</div><div class="step-body">Upload — the robot performs a boot-up motion sequence on first power on</div></div>
+      </div>
+    </div>
+
+    <div class="section-head"><h2>Default WiFi config</h2></div>
+    <div class="config-grid">
+      <div class="config-item"><div class="config-key">SSID</div><div class="config-val">hexapod</div></div>
+      <div class="config-item"><div class="config-key">Password</div><div class="config-val">hexapod_1234</div></div>
+      <div class="config-item"><div class="config-key">UDP port</div><div class="config-val">1234</div></div>
+      <div class="config-item"><div class="config-key">AP address</div><div class="config-val">192.168.4.1</div></div>
+    </div>
+
+    <div class="section-head"><h2>Source files</h2></div>
+    <div class="card">
+      <div class="steps">
+        <div class="step"><div class="step-n" style="font-size:14px">📄</div><div class="step-body"><code>hexapod_esp32.ino</code> — main Arduino sketch</div></div>
+        <div class="step"><div class="step-n" style="font-size:14px">📄</div><div class="step-body"><code>config.h</code> — configuration parameters and pin mappings</div></div>
+        <div class="step"><div class="step-n" style="font-size:14px">📄</div><div class="step-body"><code>motion.h</code> — motion path lookup tables for all movement modes</div></div>
+      </div>
+    </div>
+
+    <div class="alert alert-accent">
+      <span class="alert-icon">✦</span>
+      <span><strong>OTA updates supported.</strong> Once firmware is flashed, future updates can be done wirelessly — connect to the hexapod WiFi network and use Arduino IDE's network port to upload without USB.</span>
+    </div>
+
+  </div>
+
+  <!-- ─────────────────── PHASE 4 ─────────────────── -->
+  <div class="phase" id="phase-3" role="tabpanel">
+
+    <div class="alert alert-accent">
+      <span class="alert-icon">✦</span>
+      <span>The hexapod includes a <strong>web-based calibration interface</strong> — no need to edit code or re-upload firmware. All adjustments happen live through your browser.</span>
+    </div>
+
+    <div class="section-head"><h2>Target neutral positions (all servos at 90°)</h2></div>
+    <div class="servo-grid">
+      <div class="servo-group">
+        <div class="servo-group-title">Left legs 1, 2, 3</div>
+        <div class="servo-joint"><span class="joint-name">Joint 1 — Coxa (hip)</span><span class="joint-target">⊥ body</span></div>
+        <div class="servo-joint"><span class="joint-name">Joint 2 — Femur (thigh)</span><span class="joint-target">horizontal</span></div>
+        <div class="servo-joint"><span class="joint-name">Joint 3 — Tibia (shin)</span><span class="joint-target">90° to femur</span></div>
+      </div>
+      <div class="servo-group">
+        <div class="servo-group-title">Right legs 1, 2, 3</div>
+        <div class="servo-joint"><span class="joint-name">Joint 1 — Coxa (hip)</span><span class="joint-target">⊥ body</span></div>
+        <div class="servo-joint"><span class="joint-name">Joint 2 — Femur (thigh)</span><span class="joint-target">horizontal</span></div>
+        <div class="servo-joint"><span class="joint-name">Joint 3 — Tibia (shin)</span><span class="joint-target">90° to femur</span></div>
+      </div>
+    </div>
+    <div style="display: flex; gap: 16px; margin-top: 16px; margin-bottom: 24px;">
+      <img src="https://github.com/rookidroid/hexapod/raw/mochi/images/calibration_1.jpg" alt="Calibration Neutral Position 1" style="flex: 1; min-width: 0; width: 100%; border-radius: var(--rd-radius-sm); border: 1px solid var(--rd-border); box-shadow: var(--rd-shadow-sm);">
+      <img src="https://github.com/rookidroid/hexapod/raw/mochi/images/calibration_2.jpg" alt="Calibration Neutral Position 2" style="flex: 1; min-width: 0; width: 100%; border-radius: var(--rd-radius-sm); border: 1px solid var(--rd-border); box-shadow: var(--rd-shadow-sm);">
+    </div>
+
+    <div class="section-head"><h2>Calibration procedure</h2></div>
+    <div class="card">
+      <div class="steps">
+        <div class="step"><div class="step-n">1</div><div class="step-body">Flash firmware with default offsets, insert batteries, turn on power switch</div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-body">Connect your device to the <code>hexapod</code> WiFi network (password: <code>hexapod_1234</code>)</div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-body">Open a browser and navigate to <code>http://192.168.4.1</code></div></div>
+        <div class="step"><div class="step-n">4</div><div class="step-body">Click <strong>"Enter Calibration Mode"</strong> — a grid of all 18 servos appears (6 legs × 3 joints)<br><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/calibration_page.jpg" alt="Calibration Web Interface" style="max-width:100%; margin-top:16px; border-radius:var(--rd-radius-sm); border:1px solid var(--rd-border); box-shadow:var(--rd-shadow-sm);"></div></div>
+        <div class="step"><div class="step-n">5</div><div class="step-body">For each misaligned servo, use <strong>+/−</strong> buttons (1 tick ≈ 0.44°) or type a value — changes apply immediately</div></div>
+        <div class="step"><div class="step-n">6</div><div class="step-body">Compare each leg against the reference images: coxa ⊥ body, femur horizontal, tibia at 90° to femur</div></div>
+        <div class="step"><div class="step-n">7</div><div class="step-body">Click <strong>"Save Offsets"</strong> — values are written to EEPROM and survive power cycles. Also printed to Serial Monitor as backup</div></div>
+        <div class="step"><div class="step-n">8</div><div class="step-body"><strong>Now tighten servo horn screws</strong> — with each servo in its correct neutral position, firmly tighten all horn screws</div></div>
+        <div class="step"><div class="step-n">9</div><div class="step-body">Click <strong>"Exit Calibration Mode"</strong> and send a walk command to verify smooth motion</div></div>
+      </div>
+    </div>
+
+    <div class="section-head"><h2>Tips for good calibration</h2></div>
+    <div class="card">
+      <ul class="checklist">
+        <li><span class="check-dot"></span>Calibrate one leg completely before moving to the next</li>
+        <li><span class="check-dot"></span>Use +/− buttons for fine control — avoid jumping to large values</li>
+        <li><span class="check-dot"></span>If offsets exceed ±25 ticks, physically reposition the servo horn instead of relying on software offset</li>
+        <li><span class="check-dot"></span>Check that servo horn screws are snug before starting — loose horns throw off calibration</li>
+        <li><span class="check-dot"></span>Servos respond immediately as you adjust, so you get real-time visual feedback</li>
+        <li><span class="check-dot"></span>Save your offsets — values persist in EEPROM but always note them from Serial Monitor as backup</li>
+        <li><span class="check-dot"></span>Re-enter calibration mode any time to fine-tune if walking looks uneven</li>
+      </ul>
+    </div>
+
+  </div>
+
+</main>
+
+
+
+<script>
+  const phases = document.querySelectorAll('.phase');
+  const pct = ['25%', '50%', '75%', '100%'];
+  const progress = document.getElementById('progress');
+  let current = 0;
+
+  function showPhase(n, btn) {
+    phases.forEach((p, i) => p.classList.toggle('visible', i === n));
+    document.querySelectorAll('.phase-btn').forEach((b, i) => {
+      b.classList.toggle('active', i === n);
+      b.setAttribute('aria-selected', i === n ? 'true' : 'false');
+    });
+    progress.style.width = pct[n];
+    current = n;
+    window.scrollTo({ top: document.querySelector('.phase-nav-wrap').offsetTop - 56, behavior: 'smooth' });
+  }
+</script>
