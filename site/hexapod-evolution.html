@@ -318,23 +318,53 @@
 
 /* ── Instructions section ──────────────────────────────────────────── */
 .hxt-instructions {
-  background: #021437;
-  border-radius: 16px;
-  padding: 32px 36px;
+  background: linear-gradient(135deg, var(--hxt-dark) 0%, #170d36 100%);
+  border-radius: var(--hxt-radius);
+  padding: 36px 40px;
   margin-bottom: 56px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 12px 32px rgba(2, 20, 55, 0.15);
+}
+.hxt-instructions::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, rgba(156,39,176,0.25) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.hxt-instructions::after {
+  content: '';
+  position: absolute;
+  bottom: -80px;
+  left: -40px;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(230,79,42,0.15) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
 }
 .hxt-instructions h2 {
   font-family: 'Space Grotesk', Inter, system-ui, sans-serif;
-  font-size: 1.3rem;
-  font-weight: 700;
+  font-size: 1.5rem;
+  font-weight: 800;
   color: #fff;
-  margin: 0 0 20px;
+  margin: 0 0 24px;
   text-align: center;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  position: relative;
+  z-index: 1;
 }
 .hxt-instr-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  gap: 16px;
+  position: relative;
+  z-index: 1;
 }
 @media (max-width: 1024px) {
   .hxt-instr-grid {
@@ -342,74 +372,95 @@
   }
 }
 .hxt-instr-card {
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.1);
-  border-radius: 10px;
-  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 18px 20px;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s, border-color 0.3s, box-shadow 0.3s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.hxt-instr-card:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(156, 39, 176, 0.4);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25), 0 0 15px rgba(156, 39, 176, 0.15);
 }
 .hxt-instr-card-header {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   color: #fff;
-  font-size: .88rem;
+  font-size: .95rem;
   font-weight: 700;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 .hxt-instr-icon {
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
 .hxt-instr-btns {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  flex-direction: row;
+  gap: 10px;
 }
 .hxt-instr-btn {
   flex: 1;
-  display: block;
-  text-align: center;
-  padding: 7px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 8px;
   border-radius: 8px;
   font-size: .75rem;
   font-weight: 600;
   text-decoration: none !important;
-  transition: opacity .2s, transform .15s;
+  transition: all 0.2s ease;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
 }
-.hxt-instr-btn:hover { opacity: .85; transform: translateY(-1px); }
-.hxt-instr-btn-guide {
-  background: rgba(255,255,255,.1);
-  border: 1px solid rgba(255,255,255,.15);
-  color: #fff !important;
-}
-.hxt-instr-btn-shop {
-  background: #9c27b0;
-  border: 1px solid #9c27b0;
-  color: #fff !important;
-}
-/* Single-link card (Calibration) */
-.hxt-instr-link {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.1);
-  border-radius: 10px;
-  padding: 14px 16px;
-  text-decoration: none !important;
-  color: #fff !important;
-  font-size: .88rem;
-  font-weight: 600;
-  transition: background .2s, transform .15s;
-}
-.hxt-instr-link:hover {
-  background: rgba(156,39,176,.3);
+.hxt-instr-btn:hover { 
   transform: translateY(-2px);
 }
-
+.hxt-instr-btn-guide {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  color: #fff !important;
+}
+.hxt-instr-btn-guide:hover {
+  background: rgba(255,255,255,.12);
+  border-color: rgba(255,255,255,.25);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.hxt-instr-btn-shop {
+  background: linear-gradient(135deg, #ab47bc 0%, #7b1fa2 100%);
+  border: 1px solid rgba(156, 39, 176, 0.5);
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(156, 39, 176, 0.3);
+}
+.hxt-instr-btn-shop:hover {
+  box-shadow: 0 6px 16px rgba(156, 39, 176, 0.5);
+  filter: brightness(1.1);
+}
 @media (max-width: 680px) {
   .hxt-instr-grid { grid-template-columns: 1fr; }
-  .hxt-instructions { padding: 24px 20px; }
+  .hxt-instructions { padding: 28px 24px; }
+}
+@media (max-width: 480px) {
+  .hxt-instr-btns {
+    flex-direction: column;
+  }
+  .hxt-instr-btn {
+    white-space: normal;
+    padding: 12px 8px;
+  }
 }
 
 /* ── Entry backgrounds ─────────────────────────────────────────────── */
