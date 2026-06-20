@@ -1211,6 +1211,57 @@ h1 em { font-style: normal; color: var(--rd-primary); }
 .meta-label { font-size: 11px; font-weight: 600; font-family: var(--rd-font-body); color: var(--rd-text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
 .meta-val { font-size: 16px; font-weight: 600; font-family: var(--rd-font-display); color: var(--rd-primary); }
 
+/* ── Hero Actions ── */
+.guide-hero-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 32px;
+}
+.hero-res-card {
+  background: var(--rd-surface);
+  border: 1px solid var(--rd-border);
+  border-radius: var(--rd-radius-sm);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none !important;
+  transition: var(--rd-transition);
+  box-shadow: var(--rd-shadow-sm);
+  text-align: left;
+}
+.hero-res-card:hover {
+  border-color: var(--rd-primary-light);
+  transform: translateY(-3px);
+  box-shadow: var(--rd-shadow-md);
+}
+.hero-res-icon {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+.hero-res-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.hero-res-title {
+  color: var(--rd-text);
+  font-weight: 700;
+  font-family: var(--rd-font-display);
+  font-size: .95rem;
+}
+.hero-res-action {
+  color: var(--rd-primary);
+  font-size: .75rem;
+  font-weight: 600;
+  font-family: var(--rd-font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 /* ── Phase nav ── */
 /* Fix for WordPress blocks breaking position: sticky */
 *:has(.phase-nav-wrap) {

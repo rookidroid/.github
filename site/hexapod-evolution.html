@@ -406,14 +406,9 @@
   letter-spacing: 0.08em;
 }
 .hxt-res-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-}
-@media (max-width: 768px) {
-  .hxt-res-grid {
-    grid-template-columns: 1fr;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 .hxt-res-card {
   background: rgba(255, 255, 255, 0.04);

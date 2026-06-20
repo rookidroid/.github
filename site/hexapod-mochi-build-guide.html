@@ -6,23 +6,35 @@
   <div class="guide-hero-eyebrow">Open-source hexapod robot</div>
   <h1>Build the<br><em>Hexapod Mochi</em></h1>
   <p class="guide-hero-desc">A complete four-phase guide — from 3D printing through electronics, firmware, and calibration.</p>
-  <div class="guide-hero-meta">
-    <div class="meta-item">
-      <span class="meta-label">Servos</span>
-      <span class="meta-val">18 × MG92B</span>
-    </div>
-    <div class="meta-item">
-      <span class="meta-label">Controller</span>
-      <span class="meta-val">ESP32</span>
-    </div>
-    <div class="meta-item">
-      <span class="meta-label">Material</span>
-      <span class="meta-val">PLA / PETG</span>
-    </div>
-    <div class="meta-item">
-      <span class="meta-label">Power</span>
-      <span class="meta-val">2 × 18650</span>
-    </div>
+
+
+  <div class="guide-hero-actions">
+    <!-- 3D Print Files -->
+    <a class="hero-res-card" href="https://rookidroid.com/product/hexapod-mochi/" target="_blank" rel="noopener">
+      <span class="hero-res-icon">🖨️</span>
+      <div class="hero-res-text">
+        <span class="hero-res-title">3D Print Files</span>
+        <span class="hero-res-action">⬇️ Free Download</span>
+      </div>
+    </a>
+    
+    <!-- ESP32 Controller -->
+    <a class="hero-res-card" href="https://rookidroid.com/product/hexapod-controller-board-esp32/" target="_blank" rel="noopener">
+      <span class="hero-res-icon">⚡</span>
+      <div class="hero-res-text">
+        <span class="hero-res-title">ESP32 Controller</span>
+        <span class="hero-res-action">🛒 Shop Part</span>
+      </div>
+    </a>
+    
+    <!-- Software Bundle -->
+    <a class="hero-res-card" href="https://github.com/rookidroid/hexapod/tree/mochi/software/hexapod_esp32" target="_blank" rel="noopener">
+      <span class="hero-res-icon">💻</span>
+      <div class="hero-res-text">
+        <span class="hero-res-title">Software Bundle</span>
+        <span class="hero-res-action">⬇️ GitHub Repo</span>
+      </div>
+    </a>
   </div>
 </section>
 
@@ -132,11 +144,11 @@
     <div class="section-head"><h2>Assembly order</h2></div>
     <div class="card">
       <div class="steps">
-        <div class="step"><div class="step-n">1</div><div class="step-body">Install servos in body before closing it — route wires neatly to avoid pinching<br><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/assembly_body.gif" alt="Body Assembly" style="max-width:300px; width:100%; margin-top:16px; border-radius:var(--rd-radius-sm); border:1px solid var(--rd-border);"></div></div>
-        <div class="step"><div class="step-n">2</div><div class="step-body">Assemble joints: bottom → cross → top. Pay close attention to left vs right orientation<br><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/assembly_joint.gif" alt="Joint Assembly" style="max-width:300px; width:100%; margin-top:16px; border-radius:var(--rd-radius-sm); border:1px solid var(--rd-border);"></div></div>
-        <div class="step"><div class="step-n">3</div><div class="step-body">Build each leg — seat bearings, insert pins (should slide smoothly without forcing)<br><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/assembly_leg.gif" alt="Leg Assembly" style="max-width:300px; width:100%; margin-top:16px; border-radius:var(--rd-radius-sm); border:1px solid var(--rd-border);"></div></div>
-        <div class="step"><div class="step-n">4</div><div class="step-body">Attach feet — verify orientation matches the joint (standard or mirrored)<br><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/assembly_foot.gif" alt="Foot Assembly" style="max-width:300px; width:100%; margin-top:16px; border-radius:var(--rd-radius-sm); border:1px solid var(--rd-border);"></div></div>
-        <div class="step"><div class="step-n">5</div><div class="step-body">Attach all 6 completed legs to the body<br><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/assembly_whole.gif" alt="Whole Assembly" style="max-width:300px; width:100%; margin-top:16px; border-radius:var(--rd-radius-sm); border:1px solid var(--rd-border);"></div></div>
+        <div class="step"><div class="step-n">1</div><div class="step-body">Install servos in body before closing it — route wires neatly to avoid pinching<br><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/assembly_body.gif" alt="Body Assembly" style="max-width:600px; width:100%; margin-top:16px; border-radius:var(--rd-radius-sm); border:1px solid var(--rd-border);"></div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-body">Assemble joints: bottom → cross → top. Pay close attention to left vs right orientation<br><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/assembly_joint.gif" alt="Joint Assembly" style="max-width:600px; width:100%; margin-top:16px; border-radius:var(--rd-radius-sm); border:1px solid var(--rd-border);"></div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-body">Build each leg — seat bearings, insert pins (should slide smoothly without forcing)<br><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/assembly_leg.gif" alt="Leg Assembly" style="max-width:600px; width:100%; margin-top:16px; border-radius:var(--rd-radius-sm); border:1px solid var(--rd-border);"></div></div>
+        <div class="step"><div class="step-n">4</div><div class="step-body">Attach feet — verify orientation matches the joint (standard or mirrored)<br><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/assembly_foot.gif" alt="Foot Assembly" style="max-width:600px; width:100%; margin-top:16px; border-radius:var(--rd-radius-sm); border:1px solid var(--rd-border);"></div></div>
+        <div class="step"><div class="step-n">5</div><div class="step-body">Attach all 6 completed legs to the body<br><img src="https://github.com/rookidroid/hexapod/raw/mochi/images/assembly_whole.gif" alt="Whole Assembly" style="max-width:600px; width:100%; margin-top:16px; border-radius:var(--rd-radius-sm); border:1px solid var(--rd-border);"></div></div>
         <div class="step"><div class="step-n">6</div><div class="step-body">Connect servos and controller — then proceed to Electronics and Software before final tightening</div></div>
       </div>
     </div>
