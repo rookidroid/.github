@@ -207,4 +207,22 @@
     applyFilters();
   });
 
+  // ── WooCommerce FlexSlider 2-image bleed fix ─────────────────────────────────
+  // When a product has exactly 2 gallery images, FlexSlider clones both slides
+  // (to enable infinite looping), creating 4 total slides. Its initial width
+  // calculation runs before layout is fully settled, causing each slide to be
+  // rendered slightly narrower than the viewport — making the next slide bleed in.
+  // The fix: dispatch a window resize after WooCommerce's gallery finishes
+  // initialising so FlexSlider recalculates slide widths from the correct layout.
+  $(document).on('wc-product-gallery-after-init', function () {
+    // A brief delay lets the browser finish painting before we force a recalc
+    setTimeout(function () {
+      $(window).trigger('resize');
+      // Second pass for slower devices / cached layouts
+      setTimeout(function () {
+        $(window).trigger('resize');
+      }, 300);
+    }, 50);
+  });
+
 })(jQuery);
