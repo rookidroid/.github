@@ -1262,6 +1262,8 @@ h1 em { font-style: normal; color: var(--rd-primary); }
   letter-spacing: 0.05em;
 }
 
+
+
 /* ── Phase nav ── */
 /* Fix for WordPress blocks breaking position: sticky */
 *:has(.phase-nav-wrap) {
